@@ -188,7 +188,6 @@ export default {
     const dbDelete = (telefono: string) => {
       deleteClient(telefono)
       queryAllTree().then((value) => {
-        console.log("delete success", value)
       })
     }
     const showClient = () => {

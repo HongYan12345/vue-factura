@@ -7,6 +7,7 @@
     <div>
       <a-button @click="exportPdf">export</a-button>
     </div>
+
   </div>
 </template>
 
@@ -27,7 +28,9 @@ export default {
       router.back();
     };
 
-    const exportPdf = () => {};
+    const exportPdf = () => {
+      export_pdf()
+    };
 
     return {
       ...refData,

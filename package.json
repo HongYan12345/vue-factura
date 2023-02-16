@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "ant-design-vue": "^3.2.15",
+    "jspdf": "^2.5.1",
     "sqlite3": "^5.0.2",
     "vue-router": "^4.1.6"
   }

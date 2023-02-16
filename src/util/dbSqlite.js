@@ -35,7 +35,14 @@ export const deleteClient = (telefono) => {
   return new Promise((resolve, reject) => {
     let db = conn()
     db.serialize(() => {
-      db.run("DELETE FROM user WHERE telephone=?", telefono)
+      db.run("DELETE FROM user WHERE telephone=(?)", telefono, function(err) {
+        if(err){
+            console.log(err)
+        }
+        else{
+            console.log("Successful");
+        }
+        db.close();})
       resolve()
     })
     
