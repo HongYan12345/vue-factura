@@ -35,7 +35,25 @@ export const deleteClient = (telefono) => {
   return new Promise((resolve, reject) => {
     let db = conn()
     db.serialize(() => {
-      db.run("DELETE FROM user WHERE telephone=(?)", telefono, function(err) {
+      db.run("DELETE FROM user WHERE telephone=?",telefono, function(err) {
+        if(err){
+            console.log(err)
+        }
+        else{
+            console.log("Successful");
+        }
+        db.close();})
+      resolve()
+    })
+    
+  })
+}
+
+export const selectClient = (telefono) => {
+  return new Promise((resolve, reject) => {
+    let db = conn()
+    db.serialize(() => {
+      db.run("SELECT FROM user WHERE telephone=(?)", telefono, function(err) {
         if(err){
             console.log(err)
         }
@@ -53,6 +71,55 @@ export const queryAllTree = () => {
   return new Promise((resolve, reject) => {
     let db = conn()
     db.all('select * from user order by telephone', (err, rows) => {
+      if (err) reject(err)
+      resolve(rows || [])
+    })
+  })
+}
+
+export const initTableM = () => {
+  return new Promise((resolve, reject) => {
+    let db = conn()
+    db.serialize(() => {
+      db.run('CREATE TABLE IF NOT EXISTS producto(name char(50) PRIMARY KEY)')
+      resolve()
+    })
+  })
+}
+
+export const insertProducto = (name) => {
+  return new Promise((resolve, reject) => {
+    let db = conn()
+    let prepare = db.prepare('replace into producto (name) values (?)')
+    prepare.run(name)
+    prepare.finalize(err => {
+      if (!err) resolve()
+    })
+  })
+}
+
+export const deleteProducto = (name) => {
+  return new Promise((resolve, reject) => {
+    let db = conn()
+    db.serialize(() => {
+      db.run("DELETE FROM producto WHERE name=?",name, function(err) {
+        if(err){
+            console.log(err)
+        }
+        else{
+            console.log("Successful");
+        }
+        db.close();})
+      resolve()
+    })
+    
+  })
+}
+
+export const queryAllProducto = () => {
+  return new Promise((resolve, reject) => {
+    let db = conn()
+    db.all('select * from producto order by name', (err, rows) => {
       if (err) reject(err)
       resolve(rows || [])
     })

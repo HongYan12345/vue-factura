@@ -1,13 +1,24 @@
 <template>
   <a-button @click="goClient">cliente</a-button>
-  
+  <a-button @click="modificaDato">修改公司信息</a-button>
+  <a-button @click="modificaProducto">修改产品信息</a-button>
+  <a-modal
+      v-model:visible="modifica_producto"
+      title="Title"
+      :confirm-loading="confirmLoading"
+      @ok="handleOkProducto"
+    >
+    <a-input
+      :value="producto_name"
+    >nombre de producto:</a-input>
+    </a-modal>
   <div>
     <a-button class="editable-add-btn" @click="handleAdd" :disabled="error||isAdd" style="margin-bottom: 8px">添加</a-button>
   </div>
   
   <a-input-number v-model:value="dto" @change="calcula"  addon-before="DTO" addon-after="%"></a-input-number>
-  <a-checkbox @click="checkIva">+21%IVA</a-checkbox>
-  <a-checkbox @click="checkRe">+5.2%R.E.</a-checkbox>
+  <a-checkbox :checked="isIva" @click="checkIva">+21%IVA</a-checkbox>
+  <a-checkbox :checked="isRe" @click="checkRe">+5.2%R.E.</a-checkbox>
   <a-button @click="clearTable">clear</a-button>
   <div v-if="error">
     <a-alert message="Error Text" type="error" :visible="error" />
@@ -28,10 +39,11 @@
     </template>
     <template #articulo="{ text, record }" :key="articulo">
       <div>
+        
         <a-select
           v-if="editableData[record.key]"
           v-model:value="editableData[record.key].articulo"
-          mode="tags"
+          show-search
           style="width: 100%"
           placeholder="选择一个"
           
@@ -57,7 +69,7 @@
           <a-select-option value="portes">PORTES</a-select-option>
         </a-select>
         <template v-else>
-          {{ text[0] }}
+          {{ text }}
         </template>
       </div>
     </template>
@@ -97,11 +109,12 @@
   
 </template>
 <script lang="ts">
-import { computed, defineComponent, reactive, Ref, ref, UnwrapRef , toRefs, toRaw, onUpdated} from 'vue'
+import { computed, defineComponent, reactive, Ref, ref, UnwrapRef , toRefs, toRaw, onUpdated, onMounted} from 'vue'
 import { CheckOutlined, EditOutlined } from '@ant-design/icons-vue'
 import { useRouter} from 'vue-router'
 import { cloneDeep } from 'lodash-es'
-import { initTable, insertClient, deleteClient, queryAllTree} from '../util/dbSqlite'
+import { useStore } from 'vuex'
+import { initTable, insertProducto, insertClient, deleteClient, queryAllTree} from '../util/dbSqlite'
 
 interface DataItem {
   key: string;
@@ -131,10 +144,13 @@ export default defineComponent({
       isRe: false,
       isIva: false,
       ante_euro:0,
-      
+      modifica_producto:false,
+      modifica_dato:false,
+      producto_name:"",
     })
     const refData = toRefs(data)
     const router = useRouter()
+    const store = useStore()
     const clients = ref([] as Array<{value: string, label: string}>)
     const columns = [
       {
@@ -178,11 +194,11 @@ export default defineComponent({
     const count = computed(() => dataSource.value.length + 1)
     const editableData: UnwrapRef<Record<string, DataItem>> = reactive({})
 
-     const edit = (key: string) => {
+    const edit = (key: string) => {
       editableData[key] = cloneDeep(dataSource.value.filter(item => key === item.key)[0])
       data.ante_euro = Number(editableData[key].euros)
       console.log("edit",key)
-    };
+    }
     const save = (key: string) => {
       if(editableData[key].cantidad != null && editableData[key].precio != null && editableData[key].articulo != null && editableData[key].codigo != null){
         editableData[key].euros = String(Number(editableData[key].cantidad)*Number(editableData[key].precio))
@@ -234,6 +250,7 @@ export default defineComponent({
 
     const checkIva = () => {
       data.isIva = !data.isIva
+      console.log(data.isIva)
       calcula()
     }
 
@@ -288,6 +305,15 @@ export default defineComponent({
 
 //导出pdf
     const goPdf = () => {
+      console.log(dataSource.value)
+      store.commit("saveData",{
+        dataArray: dataSource.value,
+        euroBase: data.total,
+        dto:data.dto,
+        isRe:data.isRe,
+        isIva:data.isIva,
+      })
+      console.log("vuex:", store.state.dataSource)
       router.push({
         name: "pdf",
       })
@@ -295,11 +321,49 @@ export default defineComponent({
 
 //管理客户
     const goClient = () => {
+      store.commit("saveData",{
+        dataArray: dataSource.value,
+        euroBase: data.total,
+        dto:data.dto,
+        isRe:data.isRe,
+        isIva:data.isIva,
+      })
+      console.log("vuex:", store.state.dataSource)
       router.push({
         name: "client",
       })
     }
     
+    const modificaDato = () => {
+      
+    }
+
+    const modificaProducto = () => {
+      data.modifica_producto = true;
+    }
+
+    const confirmLoading = ref<boolean>(false);
+
+    const handleOkProducto = () => {
+      confirmLoading.value = true;
+      insertProducto(data.producto_name).then((value) => {
+        data.modifica_producto = false
+        confirmLoading.value = false
+      })
+        
+    }
+
+    onMounted(() => {
+      data.dto = store.state.dto
+      if(store.state.dataStore){
+        dataSource.value = store.state.dataSource
+      }
+      data.total = store.state.euroBase
+      data.isRe = store.state.isRe
+      data.isIva = store.state.isIva
+      calcula()
+    })
+
     onUpdated(() => {
       //console.log("up")
       //showClient()
@@ -327,6 +391,10 @@ export default defineComponent({
       goPdf,
       goClient,
       clients,
+      modificaDato,
+      modificaProducto,
+      handleOkProducto,
+      confirmLoading
     }
   },
 });

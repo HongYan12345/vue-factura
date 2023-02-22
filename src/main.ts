@@ -5,6 +5,7 @@ import './samples/node-api'
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
 import router from './route';
+import {store}  from "./store/store";
 
 
  
@@ -12,6 +13,7 @@ import router from './route';
 createApp(App)
   .use(Antd)
   .use(router)
+  .use(store)
   .mount('#app')
   .$nextTick(() => {
     postMessage({ payload: 'removeLoading' }, '*')

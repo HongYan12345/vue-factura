@@ -3,6 +3,7 @@
     <div>
       <a-button @click="goBack">back</a-button>
     </div>
+    
     <a-button type="primary" @click="showDrawer">
       <template #icon><PlusCircleOutlined /></template>
       新建客户
@@ -11,6 +12,7 @@
       <template #icon><DeleteOutlined /></template>
       删除老客户
     </a-button>
+    
     <a-drawer
       title="创建新客户"
       :visible="visible"
@@ -186,7 +188,7 @@ export default {
     }
 
     const dbDelete = (telefono: string) => {
-      deleteClient(telefono)
+      deleteClient(Number(telefono))
       queryAllTree().then((value) => {
       })
     }
