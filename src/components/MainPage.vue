@@ -313,7 +313,6 @@ export default defineComponent({
         isRe:data.isRe,
         isIva:data.isIva,
       })
-      console.log("vuex:", store.state.dataSource)
       router.push({
         name: "pdf",
       })
@@ -328,7 +327,6 @@ export default defineComponent({
         isRe:data.isRe,
         isIva:data.isIva,
       })
-      console.log("vuex:", store.state.dataSource)
       router.push({
         name: "client",
       })
@@ -355,9 +353,9 @@ export default defineComponent({
 
     onMounted(() => {
       data.dto = store.state.dto
-      if(store.state.dataStore){
-        dataSource.value = store.state.dataSource
-      }
+      
+        dataSource.value = store.state.dataArray
+      
       data.total = store.state.euroBase
       data.isRe = store.state.isRe
       data.isIva = store.state.isIva

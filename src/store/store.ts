@@ -13,7 +13,7 @@ interface DataItem {
 export const store = new Vuex.Store({
   state: {
     dataArray: new Array<DataItem>(),
-    euroBase: null,
+    euroBase: 0,
     dto:0,
     isRe: false,
     isIva: false,
