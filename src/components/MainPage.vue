@@ -1,7 +1,36 @@
 <template>
-  <a-button @click="goClient">cliente</a-button>
-  <a-button @click="modificaDato">修改公司信息</a-button>
-  <a-button @click="modificaProducto">修改产品信息</a-button>
+  <a-button @click="goClient">{{$t('cliente')}}</a-button>
+  <a-dropdown>
+      <template #overlay>
+        <a-menu @click="handleMenuClick">
+          <a-menu-item key="1">
+            Español
+          </a-menu-item>
+          <a-menu-item key="2">
+            English
+          </a-menu-item>
+          <a-menu-item key="3">
+            简体中文
+          </a-menu-item>
+        </a-menu>
+      </template>
+      <a-button>
+        {{$t('lenguage')}}
+        <DownOutlined />
+      </a-button>
+    </a-dropdown>
+  <a-button @click="modificaDato">{{$t('modifica_comp')}}</a-button>
+  <a-button @click="modificaProducto">{{$t('modifica_person')}}</a-button>
+   <a-modal
+      v-model:visible="modifica_dato"
+      title="Title"
+      :confirm-loading="confirmLoading"
+      @ok="handleOkProducto"
+    >
+    <a-input
+      :value="producto_name"
+    >{{$t('name_empresa')}}:</a-input>
+    </a-modal>
   <a-modal
       v-model:visible="modifica_producto"
       title="Title"
@@ -10,7 +39,7 @@
     >
     <a-input
       :value="producto_name"
-    >nombre de producto:</a-input>
+    >{{$t('name_producto')}}:</a-input>
     </a-modal>
   <div>
     <a-button class="editable-add-btn" @click="handleAdd" :disabled="error||isAdd" style="margin-bottom: 8px">添加</a-button>
@@ -19,7 +48,7 @@
   <a-input-number v-model:value="dto" @change="calcula"  addon-before="DTO" addon-after="%"></a-input-number>
   <a-checkbox :checked="isIva" @click="checkIva">+21%IVA</a-checkbox>
   <a-checkbox :checked="isRe" @click="checkRe">+5.2%R.E.</a-checkbox>
-  <a-button @click="clearTable">clear</a-button>
+  <a-button @click="clearTable">{{$t('clear')}}</a-button>
   <div v-if="error">
     <a-alert message="Error Text" type="error" :visible="error" />
   </div>
@@ -77,11 +106,11 @@
     <template #operation="{ record }">
       <div class="editable-row-operations">
         <span v-if="editableData[record.key]">
-          <button @click="save(record.key)">保存</button>
+          <button @click="save(record.key)">{{$t('save')}}</button>
           
         </span>
         <span v-else>
-          <button @click="edit(record.key)">修改</button>
+          <button @click="edit(record.key)">{{$t('modifica')}}</button>
         </span>
       </div>
       <a-popconfirm
@@ -89,7 +118,7 @@
         title="确定删除吗?"
         @confirm="onDelete(record.key)"
       >
-        <button>删除</button>
+        <button>{{$t('delect')}}</button>
       </a-popconfirm>
       
     </template>
@@ -109,12 +138,14 @@
   
 </template>
 <script lang="ts">
-import { computed, defineComponent, reactive, Ref, ref, UnwrapRef , toRefs, toRaw, onUpdated, onMounted} from 'vue'
-import { CheckOutlined, EditOutlined } from '@ant-design/icons-vue'
+import { computed, defineComponent, reactive, Ref, ref, UnwrapRef , toRefs, toRaw, onUpdated, onMounted, getCurrentInstance} from 'vue'
+import { CheckOutlined, EditOutlined,DownOutlined } from '@ant-design/icons-vue'
 import { useRouter} from 'vue-router'
 import { cloneDeep } from 'lodash-es'
 import { useStore } from 'vuex'
 import { initTable, insertProducto, insertClient, deleteClient, queryAllTree} from '../util/dbSqlite'
+import { useI18n } from "vue3-i18n"
+import type { MenuProps } from 'ant-design-vue'
 
 interface DataItem {
   key: string;
@@ -130,7 +161,7 @@ export default defineComponent({
   components: {
     CheckOutlined,
     EditOutlined,
-    
+    DownOutlined,
   },
   setup() {
     const data = reactive({
@@ -147,11 +178,18 @@ export default defineComponent({
       modifica_producto:false,
       modifica_dato:false,
       producto_name:"",
+      empresa_name:"",
     })
     const refData = toRefs(data)
     const router = useRouter()
     const store = useStore()
     const clients = ref([] as Array<{value: string, label: string}>)
+    const i18n = useI18n();
+    const setLocale = (lang: string) => {
+      i18n.setLocale(lang);
+    };
+
+
     const columns = [
       {
         title: '数量',
@@ -336,6 +374,12 @@ export default defineComponent({
       
     }
 
+    const handleOkDato = () => {
+      confirmLoading.value = true;
+      
+        
+    }
+
     const modificaProducto = () => {
       data.modifica_producto = true;
     }
@@ -350,6 +394,18 @@ export default defineComponent({
       })
         
     }
+
+    const handleMenuClick: MenuProps['onClick'] = e => {
+      if(e.key == 1){
+        setLocale('es')
+      }
+      else if(e.key == 2){
+        setLocale('en')
+      }
+      else{
+        setLocale('zh')
+      }
+    };
 
     onMounted(() => {
       data.dto = store.state.dto
@@ -390,9 +446,12 @@ export default defineComponent({
       goClient,
       clients,
       modificaDato,
+      handleOkDato,
       modificaProducto,
       handleOkProducto,
-      confirmLoading
+      confirmLoading,
+      setLocale,
+      handleMenuClick,
     }
   },
 });
