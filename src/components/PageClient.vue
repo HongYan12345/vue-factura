@@ -24,8 +24,7 @@
 
       <a-form
         :model="formState"
-        :label-col="labelCol"
-        :wrapper-col="wrapperCol"
+        
       >
         <a-form-item label="名字">
           <a-input v-model:value="formState.name" />

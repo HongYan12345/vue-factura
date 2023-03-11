@@ -66,7 +66,7 @@
         </template>
       </div>
     </template>
-    <template #articulo="{ text, record }" :key="articulo">
+    <template #articulo="{ text, record }" >
       <div>
         
         <a-select
@@ -147,6 +147,12 @@ import { initTable, insertProducto, insertClient, deleteClient, queryAllTree} fr
 import { useI18n } from "vue3-i18n"
 import type { MenuProps } from 'ant-design-vue'
 
+declare module 'vue' {
+  interface ComponentCustomProperties {
+    $t: any;
+  }
+}
+
 interface DataItem {
   key: string;
   cantidad: string;
@@ -184,7 +190,7 @@ export default defineComponent({
     const router = useRouter()
     const store = useStore()
     const clients = ref([] as Array<{value: string, label: string}>)
-    const i18n = useI18n();
+    const i18n = useI18n()
     const setLocale = (lang: string) => {
       i18n.setLocale(lang);
     };
