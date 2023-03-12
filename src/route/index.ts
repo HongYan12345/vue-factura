@@ -1,7 +1,7 @@
 import {createRouter, createWebHistory} from "vue-router"
 
 const pdf = () => import("../components/PagePdf.vue")
-const main = () => import("../components/MainPage.vue")
+const main = () => import("../components/PageMain.vue")
 const client = () => import("../components/PageClient.vue")
 
 const routes = [

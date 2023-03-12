@@ -20,17 +20,17 @@
       </a-button>
     </a-dropdown>
   <a-button @click="modificaDato">{{$t('modifica_comp')}}</a-button>
-  <a-button @click="modificaProducto">{{$t('modifica_person')}}</a-button>
-   <a-modal
+  <a-modal
       v-model:visible="modifica_dato"
       title="Title"
       :confirm-loading="confirmLoading"
-      @ok="handleOkProducto"
+      @ok="handleOkDato"
     >
     <a-input
       :value="producto_name"
     >{{$t('name_empresa')}}:</a-input>
     </a-modal>
+  <a-button @click="modificaProducto">{{$t('modifica_person')}}</a-button>
   <a-modal
       v-model:visible="modifica_producto"
       title="Title"
@@ -41,42 +41,26 @@
       :value="producto_name"
     >{{$t('name_producto')}}:</a-input>
     </a-modal>
-  <div>
-    <a-button class="editable-add-btn" @click="handleAdd" :disabled="error||isAdd" style="margin-bottom: 8px">添加</a-button>
-  </div>
-  
-  <a-input-number v-model:value="dto" @change="calcula"  addon-before="DTO" addon-after="%"></a-input-number>
-  <a-checkbox :checked="isIva" @click="checkIva">+21%IVA</a-checkbox>
-  <a-checkbox :checked="isRe" @click="checkRe">+5.2%R.E.</a-checkbox>
-  <a-button @click="clearTable">{{$t('clear')}}</a-button>
-  <div v-if="error">
-    <a-alert message="Error Text" type="error" :visible="error" />
-  </div>
-  
-  <a-table bordered :data-source="dataSource" :columns="columns" :pagination="false">
-    <template v-for="col in ['cantidad', 'precio', 'codigo']" #[col]="{ text, record }" :key="col">
-      <div>
-        <a-input
-          v-if="editableData[record.key]"
-          v-model:value="editableData[record.key][col]"
-          style="margin: -5px 0"
-        />
-        <template v-else>
-          {{ text }}
-        </template>
-      </div>
-    </template>
-    <template #articulo="{ text, record }" >
-      <div>
-        
-        <a-select
-          v-if="editableData[record.key]"
-          v-model:value="editableData[record.key].articulo"
+
+    <a-button @click="addProducto">{{$t('add_producto')}}</a-button>
+   <a-modal
+      v-model:visible="add_producto"
+      title="add"
+      :confirm-loading="confirmLoading"
+      @ok="handleOkAdd"
+    >
+    数量:
+    <a-input v-model:value="cantidad"></a-input>
+    价格:
+    <a-input v-model:value="precio"></a-input>
+    型号:
+    <a-input v-model:value="codigo"></a-input>
+    选择:
+    <a-select
+          v-model:value="articulo"
           show-search
           style="width: 100%"
-          placeholder="选择一个"
-          
-        >
+    >
           <a-select-option value="bañador">Bañador</a-select-option>
           <a-select-option value="bikini">Bikini</a-select-option>
           <a-select-option value="bolso">Bolso</a-select-option>
@@ -97,33 +81,17 @@
           <a-select-option value="vestido">Vestido</a-select-option>
           <a-select-option value="portes">PORTES</a-select-option>
         </a-select>
-        <template v-else>
-          {{ text }}
-        </template>
-      </div>
-    </template>
-    
-    <template #operation="{ record }">
-      <div class="editable-row-operations">
-        <span v-if="editableData[record.key]">
-          <button @click="save(record.key)">{{$t('save')}}</button>
-          
-        </span>
-        <span v-else>
-          <button @click="edit(record.key)">{{$t('modifica')}}</button>
-        </span>
-      </div>
-      <a-popconfirm
-        v-if="dataSource.length"
-        title="确定删除吗?"
-        @confirm="onDelete(record.key)"
-      >
-        <button>{{$t('delect')}}</button>
-      </a-popconfirm>
-      
-    </template>
-    
-  </a-table>
+    </a-modal>
+
+  
+  <a-input-number v-model:value="dto" @change="calcula"  addon-before="DTO" addon-after="%"></a-input-number>
+  <a-checkbox :checked="isIva" @click="checkIva">+21%IVA</a-checkbox>
+  <a-checkbox :checked="isRe" @click="checkRe">+5.2%R.E.</a-checkbox>
+  <a-button @click="clearTable">{{$t('clear')}}</a-button>
+  <div v-if="error">
+    <a-alert message="Error Text" type="error" :visible="error" />
+  </div>
+
   <div>
     <a-row>
     <a-col :span="6">total:{{total}}</a-col>
@@ -134,6 +102,24 @@
     <a-col :span="6">TOTAL EUROS:{{total_euros.toFixed(2)}}</a-col>
   </a-row>
   </div>
+
+
+  <a-list item-layout="horizontal" :data-source="dataSource">
+    <template #renderItem="{ item }">
+        
+      <a-list-item>
+        <a-list-item-meta
+          description=""
+        >{{item.precio}}
+          <template #title>
+            <a href="#">{{ item.codigo }}</a>
+          </template>
+          
+        </a-list-item-meta>
+      </a-list-item>
+    </template>
+  </a-list>
+  
   <a-button @click="goPdf">导出</a-button>
   
 </template>
@@ -154,7 +140,7 @@ interface DataItem {
   precio: string;
   codigo:string;
   articulo: string;
-  euros: string;
+  euros: number;
 }
 
 
@@ -167,7 +153,6 @@ export default defineComponent({
   setup() {
     const data = reactive({
       error: false,
-      isAdd: false,
       total:0,
       iva:0,
       re:0,
@@ -178,110 +163,103 @@ export default defineComponent({
       ante_euro:0,
       modifica_producto:false,
       modifica_dato:false,
+      add_producto:false,
       producto_name:"",
       empresa_name:"",
+      cantidad:"",
+      codigo:"",
+      precio:"",
+      articulo:"",
     })
     const refData = toRefs(data)
-    const router = useRouter()
-    const store = useStore()
-    const clients = ref([] as Array<{value: string, label: string}>)
+
+//i18n
     const {t, locale} = useI18n()
     const setLocale = (lang: string) => {
       locale.value = lang
     };
-
-
-    const columns = [
-      {
-        title: '数量',
-        dataIndex: 'cantidad',
-        width: '15%',
-        slots: { customRender: 'cantidad' },
-      },
-      {
-        title: '型号',
-        dataIndex: 'codigo',
-        width: '25%',
-        slots: { customRender: 'codigo' },
-      },
-      {
-        title: '样子',
-        dataIndex: 'articulo',
-        width: '35%',
-        slots: { customRender: 'articulo' },
-      },
-       {
-        title: '价格',
-        dataIndex: 'precio',
-        width: '15%',
-        slots: { customRender: 'precio' },
-      },
-      {
-        title: '€UROS',
-        dataIndex: 'euros',
-        width: '25%',
-      },
-      {
-        title: '修改',
-        dataIndex: 'operation',
-        
-        slots: { customRender: 'operation' },
-      },
-    ]
-    const dataSource: Ref<DataItem[]> = ref([])
-
-    const count = computed(() => dataSource.value.length + 1)
-    const editableData: UnwrapRef<Record<string, DataItem>> = reactive({})
-
-    const edit = (key: string) => {
-      editableData[key] = cloneDeep(dataSource.value.filter(item => key === item.key)[0])
-      data.ante_euro = Number(editableData[key].euros)
-      console.log("edit",key)
-    }
-    const save = (key: string) => {
-      if(editableData[key].cantidad != null && editableData[key].precio != null && editableData[key].articulo != null && editableData[key].codigo != null){
-        editableData[key].euros = String(Number(editableData[key].cantidad)*Number(editableData[key].precio))
-        data.total = data.total+Number(editableData[key].euros)-data.ante_euro
-        calcula()
-        data.ante_euro = 0
-        console.log("articula:", editableData[key].articulo)
-        Object.assign(dataSource.value.filter(item => key === item.key)[0], editableData[key])
-        delete editableData[key]
-        console.log("data:", dataSource.value)
-        data.isAdd = false
-        data.error = false
+    
+    const handleMenuClick: MenuProps['onClick'] = e => {
+      if(e.key == 1){
+        setLocale('es')
+      }
+      else if(e.key == 2){
+        setLocale('en')
       }
       else{
-        data.error = true
+        setLocale('zh')
       }
-    };
-    const cancel = (key: string) => {
-      delete editableData[key]
     };
 
-    const onDelete = (key: string) => {
-      
-      data.total = data.total-Number(dataSource.value.filter(item => item.key === key)[0].euros)
-      calcula()
-      dataSource.value = dataSource.value.filter(item => item.key !== key)
-      console.log("----", dataSource.value.filter(item => item.key === key)[0])
-      data.isAdd = false
-      data.error = false
-    };
-    const handleAdd = () => {
-      data.isAdd = true
-      const newData = {
-        key: `${count.value}`,
-        cantidad: "",
-        codigo: "",
-        precio: "",
-        articulo: "",
-        euros : ""
-      }
-      dataSource.value.push(newData)
-      editableData[`${count.value-1}`] = cloneDeep(dataSource.value.filter(item => `${count.value-1}` === item.key)[0])
+//lista de producto
+    const dataSource: Ref<DataItem[]> = ref([])
+    const count = computed(() => dataSource.value.length + 1)
+    const confirmLoading = ref<boolean>(false);
+    const router = useRouter()
+    const store = useStore()
+
+//lista de clients
+    const clients = ref([] as Array<{value: string, label: string}>)
+
+//添加客户公司信息
+    const modificaDato = () => {
+      data.modifica_dato = true
+    }
+    const handleOkDato = () => {
+      confirmLoading.value = true
+         
     }
 
+//添加商品
+    const addProducto = () => {
+        data.add_producto = true
+
+    }
+    const handleOkAdd = () => {
+      confirmLoading.value = true
+      const newData = {
+        key: `${count.value}`,
+        cantidad: data.cantidad,
+        codigo: data.codigo,
+        precio: data.precio,
+        articulo: data.articulo,
+        euros : Number(data.cantidad)*Number(data.precio)
+      }
+      dataSource.value.push(newData)
+      data.add_producto = false
+      data.total += Number(data.cantidad)*Number(data.precio)
+      calcula()
+      data.cantidad = ""
+      data.codigo = ""
+      data.precio = ""
+      data.articulo = ""
+      console.log("total:", data.total)
+      console.log(dataSource.value)
+      confirmLoading.value = false
+      
+    }
+//添加产品
+    const modificaProducto = () => {
+      data.modifica_producto = true;
+
+    }
+    const handleOkProducto = () => {
+      confirmLoading.value = true;
+      insertProducto(data.producto_name).then((value) => {
+        data.modifica_producto = false
+        confirmLoading.value = false
+      })
+        
+    }
+
+    //清空表格
+    const clearTable = () => {
+      dataSource.value = new Array<DataItem>()
+      data.total = 0
+      calcula()
+    }
+
+//calcula
     const checkRe = () => {
       data.isRe = !data.isRe
       calcula()
@@ -289,7 +267,6 @@ export default defineComponent({
 
     const checkIva = () => {
       data.isIva = !data.isIva
-      console.log(data.isIva)
       calcula()
     }
 
@@ -304,6 +281,7 @@ export default defineComponent({
         }
         else{
           data.total_euros = data.total
+          data.iva = 0
         }
         
         if(data.isRe){
@@ -335,14 +313,8 @@ export default defineComponent({
       }
     }
 
-//清空表格
-    const clearTable = () => {
-      dataSource.value = new Array<DataItem>()
-      data.total = 0
-      calcula()
-    }
 
-//导出pdf
+//export pdf
     const goPdf = () => {
       console.log(dataSource.value)
       store.commit("saveData",{
@@ -371,48 +343,9 @@ export default defineComponent({
       })
     }
     
-    const modificaDato = () => {
-      
-    }
-
-    const handleOkDato = () => {
-      confirmLoading.value = true;
-      
-        
-    }
-
-    const modificaProducto = () => {
-      data.modifica_producto = true;
-    }
-
-    const confirmLoading = ref<boolean>(false);
-
-    const handleOkProducto = () => {
-      confirmLoading.value = true;
-      insertProducto(data.producto_name).then((value) => {
-        data.modifica_producto = false
-        confirmLoading.value = false
-      })
-        
-    }
-
-    const handleMenuClick: MenuProps['onClick'] = e => {
-      if(e.key == 1){
-        setLocale('es')
-      }
-      else if(e.key == 2){
-        setLocale('en')
-      }
-      else{
-        setLocale('zh')
-      }
-    };
-
     onMounted(() => {
       data.dto = store.state.dto
-      
-        dataSource.value = store.state.dataArray
-      
+      dataSource.value = store.state.dataArray
       data.total = store.state.euroBase
       data.isRe = store.state.isRe
       data.isIva = store.state.isIva
@@ -430,26 +363,20 @@ export default defineComponent({
       t,
       labelCol: { style: { width: '150px' } },
       wrapperCol: { span: 14 },
-      columns,
-      onDelete,
-      handleAdd,
       dataSource,
-      editableData,
-      count,
       editingKey: '',
-      edit,
-      save,
-      cancel,
       checkRe,
       checkIva,
       calcula,
-      clearTable,
       goPdf,
       goClient,
+      clearTable,
       clients,
       modificaDato,
       handleOkDato,
+      handleOkAdd,
       modificaProducto,
+      addProducto,
       handleOkProducto,
       confirmLoading,
       setLocale,
