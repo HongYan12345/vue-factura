@@ -1,8 +1,8 @@
 import html2Canvas from 'html2canvas'
 import JsPDF from 'jspdf'
 
-export async function export_pdf(){
-    let top = document.getElementById('exportPdf');
+export async function export_pdf(html){
+    let top = html
       if (top != null) {
         top.scrollIntoView();
         top = null;

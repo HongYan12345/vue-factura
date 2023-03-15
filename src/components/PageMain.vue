@@ -26,9 +26,12 @@
       :confirm-loading="confirmLoading"
       @ok="handleOkDato"
     >
-    <a-input
-      :value="producto_name"
-    >{{$t('name_empresa')}}:</a-input>
+    数量:
+    <a-input v-model:value="cantidad"></a-input>
+    价格:
+    <a-input v-model:value="precio"></a-input>
+    型号:
+    <a-input v-model:value="codigo"></a-input>
     </a-modal>
   <a-button @click="modificaProducto">{{$t('modifica_person')}}</a-button>
   <a-modal
@@ -108,14 +111,10 @@
     <template #renderItem="{ item }">
         
       <a-list-item>
-        <a-list-item-meta
-          description=""
-        >{{item.precio}}
-          <template #title>
-            <a href="#">{{ item.codigo }}</a>
-          </template>
-          
-        </a-list-item-meta>
+        <a class="a-list" @click="editProducto(item)">
+            <h3>{{item.euros}} €, {{item.codigo}}</h3>
+            <div>{{item.cantidad}} x {{item.precio}} €</div>
+        </a>
       </a-list-item>
     </template>
   </a-list>
@@ -164,6 +163,7 @@ export default defineComponent({
       modifica_producto:false,
       modifica_dato:false,
       add_producto:false,
+      isEdit:"",
       producto_name:"",
       empresa_name:"",
       cantidad:"",
@@ -195,7 +195,9 @@ export default defineComponent({
     const dataSource: Ref<DataItem[]> = ref([])
     const count = computed(() => dataSource.value.length + 1)
     const confirmLoading = ref<boolean>(false);
+//router
     const router = useRouter()
+//store
     const store = useStore()
 
 //lista de clients
@@ -215,6 +217,16 @@ export default defineComponent({
         data.add_producto = true
 
     }
+
+    const editProducto = (item:DataItem) => {
+        data.add_producto = true
+        data.cantidad = item.cantidad
+        data.precio = item.precio
+        data.codigo = item.cantidad
+        data.articulo = item.articulo
+        data.isEdit = item.key
+    }
+
     const handleOkAdd = () => {
       confirmLoading.value = true
       const newData = {
@@ -224,6 +236,9 @@ export default defineComponent({
         precio: data.precio,
         articulo: data.articulo,
         euros : Number(data.cantidad)*Number(data.precio)
+      }
+      if(data.isEdit != ""){
+        dataSource.value = dataSource.value.filter(item => item.key !== data.isEdit)
       }
       dataSource.value.push(newData)
       data.add_producto = false
@@ -377,6 +392,7 @@ export default defineComponent({
       handleOkAdd,
       modificaProducto,
       addProducto,
+      editProducto,
       handleOkProducto,
       confirmLoading,
       setLocale,
@@ -389,4 +405,20 @@ export default defineComponent({
 .editable-row-operations a {
   margin-right: 8px;
 }
+
+.a-list{
+    background-color:azure; 
+    display: block;
+    width: auto;
+    line-height: 30px;
+    padding:0px 10px;
+    border-top:1px solid aquamarine;
+    border-bottom: 1px solid aquamarine;
+    color: black;
+    
+}
+.a-list:hover{
+    background-color:aqua;
+}
+
 </style>

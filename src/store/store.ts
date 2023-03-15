@@ -1,7 +1,7 @@
 
 import Vuex from "vuex";
 
-interface DataItem {
+export interface DataItem {
   key: string;
   cantidad: string;
   precio: string;
