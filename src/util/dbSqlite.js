@@ -116,6 +116,17 @@ export const deleteProducto = (name) => {
   })
 }
 
+export const insertEmpresa = (data) => {
+  return new Promise((resolve, reject) => {
+    let db = conn()
+    let prepare = db.prepare('replace into user (telephone, name, direccion, cp, nif, forma) values (?, ?, ?, ?, ?, ?)')
+    prepare.run(client.telefono, client.name, client.direction, client.cp, client.nif, client.forma)
+    prepare.finalize(err => {
+      if (!err) resolve()
+    })
+  })
+}
+
 export const queryAllProducto = () => {
   return new Promise((resolve, reject) => {
     let db = conn()

@@ -26,12 +26,14 @@
       :confirm-loading="confirmLoading"
       @ok="handleOkDato"
     >
-    数量:
-    <a-input v-model:value="cantidad"></a-input>
-    价格:
-    <a-input v-model:value="precio"></a-input>
-    型号:
-    <a-input v-model:value="codigo"></a-input>
+    公司名称:
+    <a-input v-model:value="empresa_name"></a-input>
+    地址:
+    <a-input v-model:value="empresa_direcction"></a-input>
+    电话:
+    <a-input v-model:value="empresa_telefono"></a-input>
+    税号:
+    <a-input v-model:value="empresa_cp"></a-input>
     </a-modal>
   <a-button @click="modificaProducto">{{$t('modifica_person')}}</a-button>
   <a-modal
@@ -115,6 +117,7 @@
             <h3>{{item.euros}} €, {{item.codigo}}</h3>
             <div>{{item.cantidad}} x {{item.precio}} €</div>
         </a>
+        <a-button @click="delelteProducto(item)">delete</a-button>
       </a-list-item>
     </template>
   </a-list>
@@ -126,9 +129,8 @@
 import { computed, defineComponent, reactive, Ref, ref, UnwrapRef , toRefs, toRaw, onUpdated, onMounted, getCurrentInstance} from 'vue'
 import { CheckOutlined, EditOutlined,DownOutlined } from '@ant-design/icons-vue'
 import { useRouter} from 'vue-router'
-import { cloneDeep } from 'lodash-es'
 import { useStore } from 'vuex'
-import { initTable, insertProducto, insertClient, deleteClient, queryAllTree} from '../util/dbSqlite'
+import { initTable, insertProducto, insertEmpresa, queryAllTree} from '../util/dbSqlite'
 import { useI18n } from "vue-i18n"
 import type { MenuProps } from 'ant-design-vue'
 
@@ -166,6 +168,9 @@ export default defineComponent({
       isEdit:"",
       producto_name:"",
       empresa_name:"",
+      empresa_direccion:"",
+      empresa_telefono:"",
+      empresa_cp:"",
       cantidad:"",
       codigo:"",
       precio:"",
@@ -203,18 +208,28 @@ export default defineComponent({
 //lista de clients
     const clients = ref([] as Array<{value: string, label: string}>)
 
-//添加客户公司信息
+//添加自家公司信息
     const modificaDato = () => {
       data.modifica_dato = true
     }
     const handleOkDato = () => {
       confirmLoading.value = true
-         
+      const newData = {
+          empresa_name: data.empresa_name,
+          empresa_direccion: data.empresa_direccion,
+          empresa_telefono: data.empresa_telefono,
+          empresa_cp: data.empresa_cp,
+      }
+      insertEmpresa(newData).then((value) => {
+        data.modifica_producto = false
+        confirmLoading.value = false
+      })
     }
 
 //添加商品
     const addProducto = () => {
         data.add_producto = true
+        
 
     }
 
@@ -222,25 +237,42 @@ export default defineComponent({
         data.add_producto = true
         data.cantidad = item.cantidad
         data.precio = item.precio
-        data.codigo = item.cantidad
+        data.codigo = item.codigo
         data.articulo = item.articulo
         data.isEdit = item.key
+        data.ante_euro = item.euros
+        console.log("ante_euro:", data.ante_euro)
     }
 
     const handleOkAdd = () => {
       confirmLoading.value = true
-      const newData = {
+      
+      if(data.isEdit != ""){
+        for(const item of dataSource.value) {
+          if(item.key === data.isEdit){
+            item.cantidad = data.cantidad 
+            item.precio = data.precio
+            item.codigo = data.codigo
+            item.articulo = data.articulo
+            item.euros = Number(data.cantidad)*Number(data.precio)
+            break
+          }
+        }
+        data.total -= data.ante_euro
+        data.ante_euro = 0
+        data.isEdit = ""
+      }
+      else{
+        const newData = {
         key: `${count.value}`,
         cantidad: data.cantidad,
         codigo: data.codigo,
         precio: data.precio,
         articulo: data.articulo,
         euros : Number(data.cantidad)*Number(data.precio)
+        }
+        dataSource.value.push(newData)
       }
-      if(data.isEdit != ""){
-        dataSource.value = dataSource.value.filter(item => item.key !== data.isEdit)
-      }
-      dataSource.value.push(newData)
       data.add_producto = false
       data.total += Number(data.cantidad)*Number(data.precio)
       calcula()

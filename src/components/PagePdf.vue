@@ -3,12 +3,16 @@
     <div>
       <a-button @click="goBack">back</a-button>
     </div>
-    <div id="exportPdf" ref="exportPdf">
+    <div id="exportPdf" ref="exportpdf">
+      <div>公司信息</div>
+      <div>客户信息</div>
+      <div>日期</div>
+      <div>号码</div>
        <div><a-table :dataSource="dataSource" :columns="columns" :pagination="false" /></div>
-      
+      <div><a-table :dataSource="dataSource_final" :columns="columns_final" :pagination="false" /></div>
     </div>
     <div>
-      <a-button :onClick="exportPdf">export</a-button>
+      <a-button @click="exportPdf">export</a-button>
     </div>
 
   </div>
@@ -21,14 +25,17 @@ import { useRouter } from "vue-router"
 import { export_pdf} from "../util/exportPdf"
 import { useStore } from 'vuex'
 import {DataItem} from '../store/store'
-import jsPDF from "jspdf";
 
 export default {
   components: {},
   setup() {
     const data = reactive({
        dataSource: new Array<DataItem>(),
+      dataSource_final: [
+        {
 
+        }
+      ],
         columns: [
           {
             title: 'cantidad',
@@ -51,9 +58,42 @@ export default {
             key: 'articulo',
           },
           {
-            title: 'euro',
-            dataIndex: 'euro',
-            key: 'euro',
+            title: 'euros',
+            dataIndex: 'euros',
+            key: 'euros',
+          },
+        ],
+
+        columns_final: [
+          {
+            title: 'TOTAL BRUTO',
+            dataIndex: 'total',
+            key: 'total',
+          },
+          {
+            title: '%DTO',
+            dataIndex: 'dto',
+            key: 'dto',
+          },
+          {
+            title: 'BASE',
+            dataIndex: 'base',
+            key: 'base',
+          },
+          {
+            title: '21%IVA',
+            dataIndex: 'iva',
+            key: 'iva',
+          },
+          {
+            title: '%R.E',
+            dataIndex: 're',
+            key: 're',
+          },
+          {
+            title: 'TOTAL EUROS',
+            dataIndex: 'total_final',
+            key: 'total_final',
           },
         ]
     });
@@ -65,16 +105,7 @@ export default {
     }
 
     const exportPdf = () => {
-      const elementToPrint = document.getElementById("exportPdf")!;
-  const pdf = new jsPDF("p", "pt", "a4");
-
-  pdf.html(elementToPrint, {
-    callback: function (pdf) {
-      pdf.save("invoice.pdf");
-    },
-    x: 10,
-    y: 10
-  });
+      export_pdf()
     }
 
     onMounted(() => {
