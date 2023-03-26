@@ -93,11 +93,12 @@ import {
 import { useRouter } from "vue-router"
 import { PlusCircleOutlined, DeleteOutlined} from '@ant-design/icons-vue'
 import {
-  initTable,
+  initAllTable,
   insertClient,
   deleteClient,
   queryAllTree,
 } from "../util/dbSqlite"
+import { FormState} from '../util/interface'
 
 export default {
   components: {
@@ -110,15 +111,6 @@ export default {
     })
     const refData = toRefs(data)
     const router = useRouter()
-
-    interface FormState {
-      name: string;
-      direction: string;
-      nif: string;
-      forma: string;
-      cp: string;
-      telefono: string;
-    }
 
     const clients = ref([] as Array<{ value: string; label: string }>)
     const formState: UnwrapRef<FormState> = reactive({
@@ -173,7 +165,7 @@ export default {
     }
 
     const dbStart = () => {
-      initTable()
+      initAllTable()
       const dato = {
         telefono: formState.telefono,
         name: formState.name,

@@ -1,26 +1,13 @@
 <template>
-  <a-button @click="goClient">{{$t('cliente')}}</a-button>
-  <a-dropdown>
-      <template #overlay>
-        <a-menu @click="handleMenuClick">
-          <a-menu-item key="1">
-            Español
-          </a-menu-item>
-          <a-menu-item key="2">
-            English
-          </a-menu-item>
-          <a-menu-item key="3">
-            简体中文
-          </a-menu-item>
-        </a-menu>
-      </template>
-      <a-button>
-        {{$t('lenguage')}}
-        <DownOutlined />
-      </a-button>
-    </a-dropdown>
-  <a-button @click="modificaDato">{{$t('modifica_comp')}}</a-button>
-  <a-modal
+{{empresa.name}}
+  <a-row :gutter="16">
+    <a-col :xs="24" :sm="12" :md="8" :lg="6">
+      <a-button @click="goClient">{{$t('cliente')}}</a-button>
+    </a-col>
+   
+     <a-col :xs="24" :sm="12" :md="8" :lg="6">
+      <a-button @click="modificaDato">{{$t('modifica_comp')}}</a-button>
+      <a-modal
       v-model:visible="modifica_dato"
       title="Title"
       :confirm-loading="confirmLoading"
@@ -29,25 +16,28 @@
     公司名称:
     <a-input v-model:value="empresa_name"></a-input>
     地址:
-    <a-input v-model:value="empresa_direcction"></a-input>
+    <a-input v-model:value="empresa_direccion"></a-input>
     电话:
     <a-input v-model:value="empresa_telefono"></a-input>
     税号:
     <a-input v-model:value="empresa_cp"></a-input>
     </a-modal>
-  <a-button @click="modificaProducto">{{$t('modifica_person')}}</a-button>
-  <a-modal
-      v-model:visible="modifica_producto"
-      title="Title"
+    </a-col>
+    <a-col :xs="24" :sm="12" :md="8" :lg="6">
+      <a-button @click="modificaArticulo">{{$t('modifica_articulo')}}</a-button>
+      <a-modal
+      v-model:visible="modifica_articulo"
+      title="修改产品类型"
       :confirm-loading="confirmLoading"
-      @ok="handleOkProducto"
+      @ok="handleOkArticulo"
     >
     <a-input
-      :value="producto_name"
+      v-model:value="articulo_name"
     >{{$t('name_producto')}}:</a-input>
     </a-modal>
-
-    <a-button @click="addProducto">{{$t('add_producto')}}</a-button>
+    </a-col>
+  </a-row>
+<a-button @click="addProducto">{{$t('add_producto')}}</a-button>
    <a-modal
       v-model:visible="add_producto"
       title="add"
@@ -65,93 +55,92 @@
           v-model:value="articulo"
           show-search
           style="width: 100%"
+          :options="articulo_list"
     >
-          <a-select-option value="bañador">Bañador</a-select-option>
-          <a-select-option value="bikini">Bikini</a-select-option>
-          <a-select-option value="bolso">Bolso</a-select-option>
-          <a-select-option value="bufanda">Bufanda</a-select-option>
-          <a-select-option value="bodi">Bodi</a-select-option>
-          <a-select-option value="camisa">Camisa</a-select-option>
-          <a-select-option value="camiseta">Camiseta</a-select-option>
-          <a-select-option value="chalego">Chalego</a-select-option>
-          <a-select-option value="chaqueta">Chaqueta</a-select-option>
-          <a-select-option value="conjunto">Conjunto</a-select-option>
-          <a-select-option value="falda">Falda</a-select-option>
-          <a-select-option value="jersey">Jersey</a-select-option>
-          <a-select-option value="mallas">Mallas</a-select-option>
-          <a-select-option value="mono">Mono</a-select-option>
-          <a-select-option value="pantalon">Pantalon</a-select-option>
-          <a-select-option value="pichi">Pichi</a-select-option>
-          <a-select-option value="sudatela">Sudatela</a-select-option>
-          <a-select-option value="vestido">Vestido</a-select-option>
-          <a-select-option value="portes">PORTES</a-select-option>
         </a-select>
     </a-modal>
+  <!-- Modals and other components here -->
 
-  
-  <a-input-number v-model:value="dto" @change="calcula"  addon-before="DTO" addon-after="%"></a-input-number>
-  <a-checkbox :checked="isIva" @click="checkIva">+21%IVA</a-checkbox>
-  <a-checkbox :checked="isRe" @click="checkRe">+5.2%R.E.</a-checkbox>
-  <a-button @click="clearTable">{{$t('clear')}}</a-button>
+  <a-row :gutter="16">
+    <a-col :xs="24" :sm="12" :md="8" :lg="6">
+      <a-input-number v-model:value="dto" @change="calcula"  addon-before="DTO" addon-after="%"></a-input-number>
+    </a-col>
+    <a-col :xs="24" :sm="12" :md="8" :lg="6">
+      <a-checkbox :checked="isIva" @click="checkIva">+21%IVA</a-checkbox>
+    </a-col>
+    <a-col :xs="24" :sm="12" :md="8" :lg="6">
+      <a-checkbox :checked="isRe" @click="checkRe">+5.2%R.E.</a-checkbox>
+        <a-col :xs="24" :sm="12" :md="8" :lg="6">
+          <a-button @click="clearTable">{{$t('clear')}}</a-button>
+        </a-col>
+    </a-col>
+  </a-row>
+
   <div v-if="error">
     <a-alert message="Error Text" type="error" :visible="error" />
   </div>
 
-  <div>
-    <a-row>
-    <a-col :span="6">total:{{total}}</a-col>
-    <a-col :span="6">{{dto}}%DTO:{{Number(total*0.01*dto).toFixed(2)}}</a-col>
-    <a-col :span="6">base:{{Number(total-total*0.01*dto).toFixed(2)}}</a-col>
-    <a-col :span="6">21%IVA:{{iva}}</a-col>
-    <a-col :span="6">5.2%R.E:{{re}}</a-col>
-    <a-col :span="6">TOTAL EUROS:{{total_euros.toFixed(2)}}</a-col>
+  <a-row>
+    <a-col :span="24">
+      <a-row>
+         <a-col :span="20" class="final">TOTAL EUROS:{{total_euros.toFixed(2)}}</a-col>
+      </a-row>
+      <a-row>
+        <a-col :span="6">total:{{total}}</a-col>
+        <a-col :span="6">{{dto}}%DTO:{{Number(total * 0.01 * dto).toFixed(2)}}</a-col>
+        <a-col :span="6">base:{{Number(total - total * 0.01 * dto).toFixed(2)}}</a-col>
+        <a-col :span="6">21%IVA:{{iva}}</a-col>
+        <a-col :span="6">5.2%R.E:{{re}}</a-col>
+       
+      </a-row>
+    </a-col>
   </a-row>
-  </div>
 
+  <a-row>
+    <a-col :span="24">
+      <a-list item-layout="horizontal" :data-source="dataSource">
+        <template #renderItem="{ item }">
+          <a-list-item>
+            <a class="a-list" @click="editProducto(item)">
+               <h3>{{item.euros}} €, {{item.codigo}}</h3>
+              <div>{{item.cantidad}} x {{item.precio}} €</div>
+            </a>
+            <a-button @click="deleteProducto(item.key, item.euros)">delete</a-button>
+          </a-list-item>
+        </template>
+      </a-list>
+    </a-col>
+  </a-row>
 
-  <a-list item-layout="horizontal" :data-source="dataSource">
-    <template #renderItem="{ item }">
-        
-      <a-list-item>
-        <a class="a-list" @click="editProducto(item)">
-            <h3>{{item.euros}} €, {{item.codigo}}</h3>
-            <div>{{item.cantidad}} x {{item.precio}} €</div>
-        </a>
-        <a-button @click="delelteProducto(item)">delete</a-button>
-      </a-list-item>
-    </template>
-  </a-list>
-  
-  <a-button @click="goPdf">导出</a-button>
+  <a-row>
+    <a-col :xs="24" :sm="12" :md="8" :lg="6">
+      <a-button @click="goPdf">导出</a-button>
+    </a-col>
+  </a-row>
   
 </template>
+
 <script lang="ts">
-import { computed, defineComponent, reactive, Ref, ref, UnwrapRef , toRefs, toRaw, onUpdated, onMounted, getCurrentInstance} from 'vue'
-import { CheckOutlined, EditOutlined,DownOutlined } from '@ant-design/icons-vue'
+import { computed, defineComponent, reactive, 
+        Ref, ref, UnwrapRef , toRefs, toRaw, 
+        onUpdated, onMounted, getCurrentInstance} from 'vue'
+import {  } from '@ant-design/icons-vue'
 import { useRouter} from 'vue-router'
 import { useStore } from 'vuex'
-import { initTable, insertProducto, insertEmpresa, queryAllTree} from '../util/dbSqlite'
-import { useI18n } from "vue-i18n"
-import type { MenuProps } from 'ant-design-vue'
-
-
-interface DataItem {
-  key: string;
-  cantidad: string;
-  precio: string;
-  codigo:string;
-  articulo: string;
-  euros: number;
-}
+import { initAllTable,  
+        insertArticulo, insertEmpresa,
+        queryEmpresa, queryAllTree, queryAllArticulo} from '../util/dbSqlite'
+import { useI18n} from "vue-i18n"
+import { DataItem} from '../util/interface'
 
 
 export default defineComponent({
   components: {
-    CheckOutlined,
-    EditOutlined,
-    DownOutlined,
+    
+    
   },
   setup() {
+    initAllTable()
     const data = reactive({
       error: false,
       total:0,
@@ -162,11 +151,11 @@ export default defineComponent({
       isRe: false,
       isIva: false,
       ante_euro:0,
-      modifica_producto:false,
+      modifica_articulo:false,
       modifica_dato:false,
       add_producto:false,
       isEdit:"",
-      producto_name:"",
+      articulo_name:"",
       empresa_name:"",
       empresa_direccion:"",
       empresa_telefono:"",
@@ -184,17 +173,6 @@ export default defineComponent({
       locale.value = lang
     };
     
-    const handleMenuClick: MenuProps['onClick'] = e => {
-      if(e.key == 1){
-        setLocale('es')
-      }
-      else if(e.key == 2){
-        setLocale('en')
-      }
-      else{
-        setLocale('zh')
-      }
-    };
 
 //lista de producto
     const dataSource: Ref<DataItem[]> = ref([])
@@ -204,9 +182,13 @@ export default defineComponent({
     const router = useRouter()
 //store
     const store = useStore()
+//empresa
+    const empresa = ref({ telefono: '', name: '', direccion: '', cp: '' })
 
 //lista de clients
-    const clients = ref([] as Array<{value: string, label: string}>)
+    const clients_list = ref([] as Array<{value: string, label: string}>)
+//lista de articulo
+    const articulo_list = ref([] as Array<{value: string}>)
 
 //添加自家公司信息
     const modificaDato = () => {
@@ -215,24 +197,22 @@ export default defineComponent({
     const handleOkDato = () => {
       confirmLoading.value = true
       const newData = {
-          empresa_name: data.empresa_name,
-          empresa_direccion: data.empresa_direccion,
-          empresa_telefono: data.empresa_telefono,
-          empresa_cp: data.empresa_cp,
+          name: data.empresa_name,
+          direccion: data.empresa_direccion,
+          telefono: data.empresa_telefono,
+          cp: data.empresa_cp,
       }
       insertEmpresa(newData).then((value) => {
-        data.modifica_producto = false
+        data.modifica_dato = false
         confirmLoading.value = false
       })
     }
 
-//添加商品
+//añadir producto
     const addProducto = () => {
         data.add_producto = true
-        
-
     }
-
+//modificar producto
     const editProducto = (item:DataItem) => {
         data.add_producto = true
         data.cantidad = item.cantidad
@@ -243,7 +223,13 @@ export default defineComponent({
         data.ante_euro = item.euros
         console.log("ante_euro:", data.ante_euro)
     }
-
+//delete producto
+    const deleteProducto = (key:string, euros:number) => {
+      data.total -= euros
+      calcula()
+      dataSource.value = dataSource.value.filter(item => item.key !== key)
+    }
+//save producto
     const handleOkAdd = () => {
       confirmLoading.value = true
       
@@ -285,21 +271,22 @@ export default defineComponent({
       confirmLoading.value = false
       
     }
-//添加产品
-    const modificaProducto = () => {
-      data.modifica_producto = true;
+//add articulo
+    const modificaArticulo = () => {
+      data.modifica_articulo = true;
 
     }
-    const handleOkProducto = () => {
+    const handleOkArticulo = () => {
       confirmLoading.value = true;
-      insertProducto(data.producto_name).then((value) => {
-        data.modifica_producto = false
+      insertArticulo(data.articulo_name).then((value) => {
+        data.modifica_articulo = false
         confirmLoading.value = false
+        data.articulo_name = ""
       })
         
     }
 
-    //清空表格
+//clear tabla
     const clearTable = () => {
       dataSource.value = new Array<DataItem>()
       data.total = 0
@@ -389,6 +376,28 @@ export default defineComponent({
         name: "client",
       })
     }
+
+    const showEmpresa = () => {
+      queryEmpresa().then((value) => {
+        console.log("empresa en base de dato:",value)
+        empresa.value.name = value[0].name
+        empresa.value.telefono = value[0].telephone
+        empresa.value.direccion = value[0].direccion
+        empresa.value.cp = value[0].cp
+        console.log(empresa.value)
+      })
+    }
+
+    const showArticulo = () => {
+      queryAllArticulo().then((value) => {
+        console.log("articulo en base de dato:",value)
+        value.forEach((r: any) => {
+          articulo_list.value.push({
+            value: r.name,
+          })
+        })
+      })
+    }
     
     onMounted(() => {
       data.dto = store.state.dto
@@ -397,6 +406,8 @@ export default defineComponent({
       data.isRe = store.state.isRe
       data.isIva = store.state.isIva
       calcula()
+      showArticulo()
+      showEmpresa()
     })
 
     onUpdated(() => {
@@ -418,17 +429,19 @@ export default defineComponent({
       goPdf,
       goClient,
       clearTable,
-      clients,
+      clients_list,
+      articulo_list,
+      empresa,
       modificaDato,
       handleOkDato,
       handleOkAdd,
-      modificaProducto,
+      modificaArticulo,
       addProducto,
+      deleteProducto,
       editProducto,
-      handleOkProducto,
+      handleOkArticulo,
       confirmLoading,
       setLocale,
-      handleMenuClick,
     }
   },
 });
@@ -438,19 +451,19 @@ export default defineComponent({
   margin-right: 8px;
 }
 
-.a-list{
-    background-color:azure; 
-    display: block;
-    width: auto;
-    line-height: 30px;
-    padding:0px 10px;
-    border-top:1px solid aquamarine;
-    border-bottom: 1px solid aquamarine;
-    color: black;
-    
+.a-list {
+  background-color: azure;
+  display: block;
+  width: 100%;
+  line-height: 20px; /* 将行间距设置为 20px */
+  padding: 0px 10px;
+  border-top: 1px solid aquamarine;
+  border-bottom: 1px solid aquamarine;
+  color: black;
 }
-.a-list:hover{
-    background-color:aqua;
+
+.a-list:hover {
+  background-color: aqua;
 }
 
 </style>
