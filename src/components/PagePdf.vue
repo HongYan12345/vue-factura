@@ -4,11 +4,13 @@
       <a-button @click="goBack">back</a-button>
     </div>
     <div id="exportPdf" ref="exportpdf">
-      <div>公司信息</div>
-      <div>客户信息</div>
-      <div>日期</div>
-      <div>号码</div>
-       <div><a-table :dataSource="dataSource" :columns="columns" :pagination="false" /></div>
+      <div>{{data_empresa.name}}</div>
+      <div>{{data_empresa.direccion}}</div>
+      <div>{{data_empresa.poblation}}</div>
+      <div>CP:{{data_empresa.cp}}</div>
+      <div>NIF:{{data_empresa.nif}}</div>
+      <div>TEL:{{data_empresa.telefono}}</div>
+      <div><a-table :dataSource="dataSource" :columns="columns" :pagination="false" /></div>
       <div><a-table :dataSource="dataSource_final" :columns="columns_final" :pagination="false" /></div>
     </div>
     <div>
@@ -20,17 +22,27 @@
 
 
 <script lang="ts">
-import { reactive, toRefs, onMounted, onUpdated } from "vue"
+import { ref, reactive, toRefs, onMounted, onUpdated } from "vue"
 import { useRouter } from "vue-router"
 import { export_pdf} from "../util/exportPdf"
 import { useStore } from 'vuex'
-import {DataItem} from '../store/store'
+import { DataItem, FormState} from '../util/interface'
 
 export default {
   components: {},
   setup() {
     const data = reactive({
-       dataSource: new Array<DataItem>(),
+      data_empresa:ref<FormState>({
+      name: "",
+      direccion: "",
+      nif: "",
+      forma: "",
+      poblation: "",
+      cp: "",
+      telefono: "",
+    }),
+      data_cliente:ref<FormState>(),
+      dataSource: new Array<DataItem>(),
       dataSource_final: [
         {
 
@@ -110,6 +122,8 @@ export default {
 
     onMounted(() => {
       data.dataSource = store.state.dataArray
+      data.data_cliente = store.state.data_cliente
+      data.data_empresa = store.state.data_empresa
       console.log(data.dataSource)
     })
 

@@ -1,5 +1,16 @@
 <template>
-{{empresa.name}}
+<div>
+  公司名字：{{empresa_name}}
+</div>
+<div>
+  <a-select
+  v-model:value="client"
+          show-search
+          style="width: 100%"
+          :options="clients_list">
+
+  </a-select>
+</div>
   <a-row :gutter="16">
     <a-col :xs="24" :sm="12" :md="8" :lg="6">
       <a-button @click="goClient">{{$t('cliente')}}</a-button>
@@ -17,10 +28,14 @@
     <a-input v-model:value="empresa_name"></a-input>
     地址:
     <a-input v-model:value="empresa_direccion"></a-input>
+    区分:
+    <a-input v-model:value="empresa_poblation"></a-input>
+    邮编:
+    <a-input v-model:value="empresa_cp"></a-input>
+    税号:
+    <a-input v-model:value="empresa_nif"></a-input>
     电话:
     <a-input v-model:value="empresa_telefono"></a-input>
-    税号:
-    <a-input v-model:value="empresa_cp"></a-input>
     </a-modal>
     </a-col>
     <a-col :xs="24" :sm="12" :md="8" :lg="6">
@@ -131,12 +146,11 @@ import { initAllTable,
         insertArticulo, insertEmpresa,
         queryEmpresa, queryAllTree, queryAllArticulo} from '../util/dbSqlite'
 import { useI18n} from "vue-i18n"
-import { DataItem} from '../util/interface'
+import { DataItem, FormState} from '../util/interface'
 
 
 export default defineComponent({
   components: {
-    
     
   },
   setup() {
@@ -160,10 +174,13 @@ export default defineComponent({
       empresa_direccion:"",
       empresa_telefono:"",
       empresa_cp:"",
+      empresa_poblation:"",
+      empresa_nif:"",
       cantidad:"",
       codigo:"",
       precio:"",
       articulo:"",
+      client:"",
     })
     const refData = toRefs(data)
 
@@ -182,8 +199,6 @@ export default defineComponent({
     const router = useRouter()
 //store
     const store = useStore()
-//empresa
-    const empresa = ref({ telefono: '', name: '', direccion: '', cp: '' })
 
 //lista de clients
     const clients_list = ref([] as Array<{value: string, label: string}>)
@@ -201,6 +216,8 @@ export default defineComponent({
           direccion: data.empresa_direccion,
           telefono: data.empresa_telefono,
           cp: data.empresa_cp,
+          poblation: data.empresa_poblation,
+          nif: data.empresa_nif
       }
       insertEmpresa(newData).then((value) => {
         data.modifica_dato = false
@@ -282,6 +299,7 @@ export default defineComponent({
         data.modifica_articulo = false
         confirmLoading.value = false
         data.articulo_name = ""
+        showArticulo()
       })
         
     }
@@ -301,50 +319,31 @@ export default defineComponent({
 
     const checkIva = () => {
       data.isIva = !data.isIva
+      console.log(data.isIva)
       calcula()
     }
 
     const calcula = () => {
+      console.log("funcion calcula")
       if(data.dto < 0){
         data.dto = 0
       }
-      if(data.dto == 0){
-        if(data.isIva){
-          data.iva = Number((data.total*0.21).toFixed(2))
-          data.total_euros = data.total+data.iva
-        }
-        else{
-          data.total_euros = data.total
-          data.iva = 0
-        }
-        
-        if(data.isRe){
-          data.re = Number((data.total*0.052).toFixed(2))
-          data.total_euros = data.total_euros+data.re
-        }
-        else{
-          data.total_euros = data.total_euros-data.re
-          data.re = 0
-        }
+      
+      if(data.isIva){
+        data.iva = Number((data.total*(100-data.dto)*0.01*0.21).toFixed(2))
       }
       else{
-        if(data.isIva){
-          data.iva = Number((data.total*(100-data.dto)*0.01*0.21).toFixed(2))
-          data.total_euros = Number((data.total*(100-data.dto)*0.01+data.iva).toFixed(2))
-        }
-        else{
-          data.total_euros = Number((data.total*(100-data.dto)*0.01).toFixed(2))
-        }
-        
-        if(data.isRe){
-          data.re = Number((data.total*(100-data.dto)*0.01*0.052).toFixed(2))
-          data.total_euros = data.total_euros+data.re
-        }
-        else{
-          data.total_euros = data.total_euros-data.re
-          data.re = 0
-        }
+        data.iva = 0
       }
+        
+      if(data.isRe){
+        data.re = Number((data.total*(100-data.dto)*0.01*0.052).toFixed(2))    
+      }
+      else{
+        data.re = 0
+      }
+      data.total_euros = Number((data.total*(100-data.dto)*0.01+data.iva+data.re).toFixed(2))
+      
     }
 
 
@@ -358,6 +357,16 @@ export default defineComponent({
         isRe:data.isRe,
         isIva:data.isIva,
       })
+      store.commit("saveEmpresa",{
+          name: data.empresa_name,
+          direccion: data.empresa_direccion,
+          telefono: data.empresa_telefono,
+          cp: data.empresa_cp,
+          poblation: data.empresa_poblation,
+          nif: data.empresa_nif
+      })
+
+      
       router.push({
         name: "pdf",
       })
@@ -380,11 +389,27 @@ export default defineComponent({
     const showEmpresa = () => {
       queryEmpresa().then((value) => {
         console.log("empresa en base de dato:",value)
-        empresa.value.name = value[0].name
-        empresa.value.telefono = value[0].telephone
-        empresa.value.direccion = value[0].direccion
-        empresa.value.cp = value[0].cp
-        console.log(empresa.value)
+        if(value[0]){
+          data.empresa_name = value[0].name
+          data.empresa_telefono = value[0].telefono
+          data.empresa_direccion = value[0].direccion
+          data.empresa_cp = value[0].cp
+          data.empresa_nif = value[0].nif
+          data.empresa_poblation = value[0].poblation
+        }
+      })
+    }
+
+    const showClient = () => {
+      queryAllTree().then((value) => {
+        
+        value.forEach((r: any) => {
+          clients_list.value.push({
+            value: r,
+            label: r.name + r.telefono,
+          })
+        })
+        console.log("list_client:", clients_list)
       })
     }
 
@@ -398,6 +423,13 @@ export default defineComponent({
         })
       })
     }
+
+    const pageUpdate = ()=>{
+      calcula()
+      showArticulo()
+      showEmpresa()
+      showClient()
+    }
     
     onMounted(() => {
       data.dto = store.state.dto
@@ -405,9 +437,7 @@ export default defineComponent({
       data.total = store.state.euroBase
       data.isRe = store.state.isRe
       data.isIva = store.state.isIva
-      calcula()
-      showArticulo()
-      showEmpresa()
+      pageUpdate()
     })
 
     onUpdated(() => {
@@ -431,7 +461,6 @@ export default defineComponent({
       clearTable,
       clients_list,
       articulo_list,
-      empresa,
       modificaDato,
       handleOkDato,
       handleOkAdd,

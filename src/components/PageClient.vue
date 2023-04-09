@@ -33,7 +33,10 @@
           <a-input v-model:value="formState.telefono" />
         </a-form-item>
         <a-form-item label="地址">
-          <a-input v-model:value="formState.direction" />
+          <a-input v-model:value="formState.direccion" />
+        </a-form-item>
+        <a-form-item label="区分">
+          <a-input v-model:value="formState.poblation" />
         </a-form-item>
         <a-form-item label="NIF">
           <a-input v-model:value="formState.nif" />
@@ -115,18 +118,20 @@ export default {
     const clients = ref([] as Array<{ value: string; label: string }>)
     const formState: UnwrapRef<FormState> = reactive({
       name: "",
-      direction: "",
+      direccion: "",
       nif: "",
       forma: "",
+      poblation: "",
       cp: "",
       telefono: "",
     })
     const onSubmit = () => {
       if (
         formState.name == "" &&
-        formState.direction == "" &&
+        formState.direccion == "" &&
         formState.nif == "" &&
         formState.forma == "" &&
+        formState.poblation == "" &&
         formState.cp == "" &&
         formState.telefono == ""
       ) {
@@ -169,7 +174,8 @@ export default {
       const dato = {
         telefono: formState.telefono,
         name: formState.name,
-        direction: formState.direction,
+        direccion: formState.direccion,
+        poblation: formState.poblation,
         cp: formState.cp,
         nif: formState.nif,
         forma: formState.forma,

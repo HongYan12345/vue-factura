@@ -21,7 +21,7 @@ function initTable(){
   return new Promise((resolve, reject) => {
     let db = conn()
     db.serialize(() => {
-      db.run('CREATE TABLE IF NOT EXISTS user(telephone INTEGER PRIMARY KEY, name char(50) NOT NULL, direccion char(200) NOT NULL, cp INTEGER NOT NULL, nif char(10) NOT NULL, forma char(20) NOT NULL)')
+      db.run('CREATE TABLE IF NOT EXISTS user(telefono char(15) PRIMARY KEY, name char(50) NOT NULL, direccion char(200) NOT NULL, cp char(10) NOT NULL, nif char(10) NOT NULL, forma char(20) NOT NULL, poblation char(20) NOT NULL)')
       resolve()
     })
   })
@@ -30,8 +30,8 @@ function initTable(){
 export const insertClient = (client) => {
   return new Promise((resolve, reject) => {
     let db = conn()
-    let prepare = db.prepare('replace into user (telephone, name, direccion, cp, nif, forma) values (?, ?, ?, ?, ?, ?)')
-    prepare.run(client.telefono, client.name, client.direction, client.cp, client.nif, client.forma)
+    let prepare = db.prepare('replace into user (telefono, name, direccion, cp, nif, forma, poblation) values (?, ?, ?, ?, ?, ?, ?)')
+    prepare.run(client.telefono, client.name, client.direccion, client.cp, client.nif, client.forma, client.poblation)
     prepare.finalize(err => {
       if (!err) resolve()
     })
@@ -42,7 +42,7 @@ export const deleteClient = (telefono) => {
   return new Promise((resolve, reject) => {
     let db = conn()
     db.serialize(() => {
-      db.run("DELETE FROM user WHERE telephone=?",telefono, function(err) {
+      db.run("DELETE FROM user WHERE telefono=?",telefono, function(err) {
         if(err){
             console.log(err)
         }
@@ -60,7 +60,7 @@ export const selectClient = (telefono) => {
   return new Promise((resolve, reject) => {
     let db = conn()
     db.serialize(() => {
-      db.run("SELECT FROM user WHERE telephone=(?)", telefono, function(err) {
+      db.run("SELECT FROM user WHERE telefono=(?)", telefono, function(err) {
         if(err){
             console.log(err)
         }
@@ -75,9 +75,10 @@ export const selectClient = (telefono) => {
 }
 
 export const queryAllTree = () => {
+  console.log("show user")
   return new Promise((resolve, reject) => {
     let db = conn()
-    db.all('select * from user order by telephone', (err, rows) => {
+    db.all('select * from user order by telefono', (err, rows) => {
       if (err) reject(err)
       resolve(rows || [])
     })
@@ -125,6 +126,7 @@ export const deleteArticulo = (name) => {
 }
 
 export const queryAllArticulo = () =>{
+  console.log("show articulo")
   return new Promise((resolve, reject) => {
     let db = conn()
     db.all('select * from articulo order by name', (err, rows) => {
@@ -139,7 +141,7 @@ function initTableEmpresa(){
   return new Promise((resolve, reject) => {
     let db = conn()
     db.serialize(() => {
-      db.run('CREATE TABLE IF NOT EXISTS empresa(telephone INTEGER PRIMARY KEY, name char(50) NOT NULL, direccion char(200) NOT NULL, cp INTEGER NOT NULL)')
+      db.run('CREATE TABLE IF NOT EXISTS empresa(telefono char(15) PRIMARY KEY, name char(50) NOT NULL, direccion char(200) NOT NULL, cp char(10) NOT NULL, poblation char(20) NOT NULL, nif char(15) NOT NULL)')
       resolve()
     })
   })
@@ -148,8 +150,9 @@ function initTableEmpresa(){
 export const insertEmpresa = (data) => {
   return new Promise((resolve, reject) => {
     let db = conn()
-    let prepare = db.prepare('replace into empresa (telephone, name, direccion, cp) values (?, ?, ?, ?)')
-    prepare.run(data.telefono, data.name, data.direccion, data.cp)
+    let prepare = db.prepare('replace into empresa (telefono, name, direccion, cp, poblation, nif) values (?, ?, ?, ?, ?, ?)')
+    console.log("update empresa")
+    prepare.run(data.telefono, data.name, data.direccion, data.cp, data.poblation, data.nif)
     prepare.finalize(err => {
       if (!err) resolve()
     })
@@ -175,6 +178,7 @@ export const deleteEmpresa = () => {
 }
 
 export const queryEmpresa = () => {
+  console.log("show empresa")
   return new Promise((resolve, reject) => {
     let db = conn()
     db.all('select * from empresa', (err, rows) => {

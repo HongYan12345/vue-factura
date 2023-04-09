@@ -19,7 +19,7 @@
         <DownOutlined />
       </a-button>
     </a-dropdown>
-    <div clear="both"></div>
+    <div></div>
     <router-view></router-view>
   </div>
 </template>
@@ -83,6 +83,6 @@ export default {
 <style scoped>
 
 .lenguage{
-  float: right;
+  
 }
 </style>

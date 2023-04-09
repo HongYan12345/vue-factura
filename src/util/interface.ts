@@ -9,9 +9,10 @@ export interface DataItem {
   
 export interface FormState{
     name: string;
-    direction: string;
+    direccion: string;
     nif: string;
     forma: string;
     cp: string;
+    poblation: string;
     telefono: string;
   }
