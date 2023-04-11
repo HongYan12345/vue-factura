@@ -110,7 +110,7 @@ export default {
   setup() {
     const data = reactive({
       errorClient: false,
-      valueClient: null,
+      valueClient: "",
     })
     const refData = toRefs(data)
     const router = useRouter()
@@ -192,18 +192,18 @@ export default {
     const showClient = () => {
       clients.value = []
       queryAllTree().then((value) => {
-        console.log("clients:",value)
         value.forEach((r: any) => {
           clients.value.push({
-            value: r.telephone,
+            value: r.telefono,
             label: r.name,
           })
         })
+        console.log("lista clients:", clients.value)
       })
     }
 
     const handleChange = () => {
-
+      console.log(data.valueClient)
     }
 
     onMounted(() => {

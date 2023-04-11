@@ -1,13 +1,10 @@
 <template>
 <div>
-  公司名字：{{empresa_name}}
-</div>
-<div>
   <a-select
-  v-model:value="client"
-          show-search
-          style="width: 100%"
-          :options="clients_list">
+    v-model:value="client"
+    show-search
+    style="width: 100%"
+    :options="clients_list">
 
   </a-select>
 </div>
@@ -59,16 +56,28 @@
       :confirm-loading="confirmLoading"
       @ok="handleOkAdd"
     >
-    数量:
-    <a-input v-model:value="cantidad"></a-input>
-    价格:
-    <a-input v-model:value="precio"></a-input>
-    型号:
-    <a-input v-model:value="codigo"></a-input>
-    选择:
+    <a-row>
+      <a-col :span="5">数量：</a-col>
+      <a-col :span="17">
+        <a-input v-model:value="cantidad" :bordered="false" style="text-align: right;"></a-input>
+      </a-col>
+    </a-row>
+    <a-row>
+      <a-col :span="5">价格:</a-col>
+      <a-col :span="17">
+        <a-input v-model:value="precio" :bordered="false" style="text-align: right;"></a-input>
+      </a-col>
+    </a-row>
+    <a-row>
+      <a-col :span="5">型号:</a-col>
+      <a-col :span="17">
+        <a-input v-model:value="codigo" :bordered="false" style="text-align: right;"></a-input>
+      </a-col>
+    </a-row>
     <a-select
           v-model:value="articulo"
           show-search
+          placeholder="Select a person"
           style="width: 100%"
           :options="articulo_list"
     >
@@ -144,7 +153,7 @@ import { useRouter} from 'vue-router'
 import { useStore } from 'vuex'
 import { initAllTable,  
         insertArticulo, insertEmpresa,
-        queryEmpresa, queryAllTree, queryAllArticulo} from '../util/dbSqlite'
+        queryEmpresa, queryAllTree, queryAllArticulo, selectClient} from '../util/dbSqlite'
 import { useI18n} from "vue-i18n"
 import { DataItem, FormState} from '../util/interface'
 
@@ -349,7 +358,8 @@ export default defineComponent({
 
 //export pdf
     const goPdf = () => {
-      console.log(dataSource.value)
+      console.log("lista de producto: ",dataSource.value)
+      console.log("cliente select: ",data.client)
       store.commit("saveData",{
         dataArray: dataSource.value,
         euroBase: data.total,
@@ -365,11 +375,25 @@ export default defineComponent({
           poblation: data.empresa_poblation,
           nif: data.empresa_nif
       })
-
-      
-      router.push({
-        name: "pdf",
+      selectClient(Number(data.client)).then((value) => {
+        console.log("select dato client:",value)
+        if(value[0]){
+          store.commit("saveCliente",{
+          name: value[0].name,
+          direccion: value[0].direccion,
+          telefono: value[0].telefono,
+          cp: value[0].cp,
+          poblation: value[0].poblation,
+          nif: value[0].nif,
+          forma: value[0].forma
+          })
+          router.push({
+            name: "pdf",
+          })
+        }
       })
+      
+      
     }
 
 //管理客户
@@ -405,7 +429,7 @@ export default defineComponent({
         
         value.forEach((r: any) => {
           clients_list.value.push({
-            value: r,
+            value: r.telefono,
             label: r.name + r.telefono,
           })
         })

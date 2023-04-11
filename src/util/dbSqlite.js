@@ -60,15 +60,11 @@ export const selectClient = (telefono) => {
   return new Promise((resolve, reject) => {
     let db = conn()
     db.serialize(() => {
-      db.run("SELECT FROM user WHERE telefono=(?)", telefono, function(err) {
-        if(err){
-            console.log(err)
-        }
-        else{
-            console.log("detele cliente Successful");
-        }
-        db.close();})
-      resolve()
+      db.all("SELECT * FROM user WHERE telefono=(?)", telefono, (err, rows) => {
+        if (err) reject(err)
+        resolve(rows || [])
+      })
+      
     })
     
   })

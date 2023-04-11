@@ -4,14 +4,23 @@
       <a-button @click="goBack">back</a-button>
     </div>
     <div id="exportPdf" ref="exportpdf">
-      <div>{{data_empresa.name}}</div>
-      <div>{{data_empresa.direccion}}</div>
-      <div>{{data_empresa.poblation}}</div>
-      <div>CP:{{data_empresa.cp}}</div>
-      <div>NIF:{{data_empresa.nif}}</div>
-      <div>TEL:{{data_empresa.telefono}}</div>
-      <div><a-table :dataSource="dataSource" :columns="columns" :pagination="false" /></div>
-      <div><a-table :dataSource="dataSource_final" :columns="columns_final" :pagination="false" /></div>
+      <a-row style="font-size: 12px;">
+        <a-col :span="12">{{data_empresa.name}}</a-col>
+        <a-col style="text-align: right;" :span="12">{{data_cliente.name}}</a-col>
+        <a-col :span="12">{{data_empresa.direccion}}</a-col>
+        <a-col style="text-align: right;" :span="12">{{data_cliente.direccion}}</a-col>
+        <a-col :span="12">{{data_empresa.poblation}}</a-col>
+        <a-col style="text-align: right;" :span="12">{{data_cliente.poblation}}</a-col>
+        <a-col :span="12">CP:{{data_empresa.cp}}</a-col>
+        <a-col style="text-align: right;" :span="12">CP:{{data_cliente.cp}}</a-col>
+        <a-col :span="12">NIF:{{data_empresa.nif}}</a-col>
+        <a-col style="text-align: right;" :span="12">NIF:{{data_cliente.nif}}</a-col>
+        <a-col :span="12">TEL:{{data_empresa.telefono}}</a-col>
+        <a-col style="text-align: right;" :span="12">TEL:{{data_cliente.telefono}}</a-col>
+      </a-row>
+      
+      <div><a-table class="table-wrapper" :dataSource="dataSource" :columns="columns" :pagination="false" /></div>
+      <div><a-table class="table-wrapper" :dataSource="dataSource_final" :columns="columns_final" :pagination="false" /></div>
     </div>
     <div>
       <a-button @click="exportPdf">export</a-button>
@@ -41,7 +50,15 @@ export default {
       cp: "",
       telefono: "",
     }),
-      data_cliente:ref<FormState>(),
+      data_cliente:ref<FormState>({
+      name: "",
+      direccion: "",
+      nif: "",
+      forma: "",
+      poblation: "",
+      cp: "",
+      telefono: "",
+    }),
       dataSource: new Array<DataItem>(),
       dataSource_final: [
         {
@@ -124,7 +141,7 @@ export default {
       data.dataSource = store.state.dataArray
       data.data_cliente = store.state.data_cliente
       data.data_empresa = store.state.data_empresa
-      console.log(data.dataSource)
+      console.log("data_cliente:",data.data_cliente)
     })
 
     return {
@@ -136,4 +153,5 @@ export default {
 };
 </script>
 <style scoped>
+
 </style>
