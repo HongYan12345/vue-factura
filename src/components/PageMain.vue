@@ -1,5 +1,63 @@
 <template>
-<div>
+
+  <a-collapse v-model:activeKey="activeKey" :bordered="false" style="background-color:gray;" expandIconPosition="right">
+    
+    <a-collapse-panel>
+    <template #header>
+      <div class="panel-header">
+        <span>TOTAL EUROS:</span>
+        <span>{{total_euros.toFixed(2)}}</span>
+        <div class="spacer"></div>
+      </div>
+    </template>
+    <a-row>
+        <a-col :span="12">
+          &nbsptotal:</a-col>
+          <a-col :span="12" class="text-right">
+          {{total.toFixed(2)}}
+        </a-col>
+
+        <a-col :span="12">
+          &nbsp{{dto}}%DTO:</a-col>
+          <a-col :span="12" class="text-right">
+          -{{Number(total * 0.01 * dto).toFixed(2)}}
+        </a-col>
+
+        <a-col :span="12">
+          &nbsp21%IVA:</a-col>
+          <a-col :span="12" class="text-right">
+          {{iva.toFixed(2)}}
+        </a-col>
+
+        <a-col :span="12">
+          &nbsp5.2%R.E:</a-col>
+          <a-col :span="12" class="text-right">
+          {{re.toFixed(2)}}
+        </a-col>
+      </a-row>
+    
+    </a-collapse-panel>
+  </a-collapse>
+  <a-row :gutter="16">
+    <a-col :xs="18" :sm="12" :md="12" :lg="6">
+      <a-input-number v-model:value="dto" @change="calcula"  addon-before="DTO" addon-after="%" :min="0" :max="99"></a-input-number>
+    </a-col>
+    <a-col :xs="12" :sm="12" :md="12" :lg="6">
+      <a-checkbox :checked="isIva" @click="checkIva">+21%IVA</a-checkbox>
+    </a-col>
+    <a-col :xs="12" :sm="12" :md="12" :lg="6">
+      <a-checkbox :checked="isRe" @click="checkRe">+5.2%R.E.</a-checkbox>
+       
+    </a-col>
+  </a-row>
+  <a-row>
+    
+       <a-col :xs="24" :sm="12" :md="8" :lg="6">
+          <a-button @click="clearTable">{{$t('clear')}}</a-button>
+        </a-col>
+      
+  </a-row>
+  <div>
   <a-select
     v-model:value="client"
     show-search
@@ -49,7 +107,7 @@
     </a-modal>
     </a-col>
   </a-row>
-<a-button @click="addProducto">{{$t('add_producto')}}</a-button>
+<a-button @click="addProducto" class="btn-add" block><template #icon><PlusOutlined /></template></a-button>
    <a-modal
       v-model:visible="add_producto"
       title="add"
@@ -59,19 +117,19 @@
     <a-row>
       <a-col :span="5">数量：</a-col>
       <a-col :span="17">
-        <a-input v-model:value="cantidad" :bordered="false" style="text-align: right;"></a-input>
+        <a-input v-model:value="cantidad" :bordered="false" class="text-right"></a-input>
       </a-col>
     </a-row>
     <a-row>
       <a-col :span="5">价格:</a-col>
       <a-col :span="17">
-        <a-input v-model:value="precio" :bordered="false" style="text-align: right;"></a-input>
+        <a-input v-model:value="precio" :bordered="false" class="text-right"></a-input>
       </a-col>
     </a-row>
     <a-row>
       <a-col :span="5">型号:</a-col>
       <a-col :span="17">
-        <a-input v-model:value="codigo" :bordered="false" style="text-align: right;"></a-input>
+        <a-input v-model:value="codigo" :bordered="false" class="text-right"></a-input>
       </a-col>
     </a-row>
     <a-select
@@ -83,46 +141,18 @@
     >
         </a-select>
     </a-modal>
-  <!-- Modals and other components here -->
 
-  <a-row :gutter="16">
-    <a-col :xs="24" :sm="12" :md="8" :lg="6">
-      <a-input-number v-model:value="dto" @change="calcula"  addon-before="DTO" addon-after="%"></a-input-number>
-    </a-col>
-    <a-col :xs="24" :sm="12" :md="8" :lg="6">
-      <a-checkbox :checked="isIva" @click="checkIva">+21%IVA</a-checkbox>
-    </a-col>
-    <a-col :xs="24" :sm="12" :md="8" :lg="6">
-      <a-checkbox :checked="isRe" @click="checkRe">+5.2%R.E.</a-checkbox>
-        <a-col :xs="24" :sm="12" :md="8" :lg="6">
-          <a-button @click="clearTable">{{$t('clear')}}</a-button>
-        </a-col>
-    </a-col>
-  </a-row>
+  
 
   <div v-if="error">
     <a-alert message="Error Text" type="error" :visible="error" />
   </div>
 
-  <a-row>
-    <a-col :span="24">
-      <a-row>
-         <a-col :span="20" class="final">TOTAL EUROS:{{total_euros.toFixed(2)}}</a-col>
-      </a-row>
-      <a-row>
-        <a-col :span="6">total:{{total}}</a-col>
-        <a-col :span="6">{{dto}}%DTO:{{Number(total * 0.01 * dto).toFixed(2)}}</a-col>
-        <a-col :span="6">base:{{Number(total - total * 0.01 * dto).toFixed(2)}}</a-col>
-        <a-col :span="6">21%IVA:{{iva}}</a-col>
-        <a-col :span="6">5.2%R.E:{{re}}</a-col>
-       
-      </a-row>
-    </a-col>
-  </a-row>
+  
 
   <a-row>
     <a-col :span="24">
-      <a-list item-layout="horizontal" :data-source="dataSource">
+      <a-list item-layout="horizontal" :data-source="dataSource" :locale="{ emptyText: '' }">
         <template #renderItem="{ item }">
           <a-list-item>
             <a class="a-list" @click="editProducto(item)">
@@ -148,7 +178,7 @@
 import { computed, defineComponent, reactive, 
         Ref, ref, UnwrapRef , toRefs, toRaw, 
         onUpdated, onMounted, getCurrentInstance} from 'vue'
-import {  } from '@ant-design/icons-vue'
+import { PlusOutlined} from '@ant-design/icons-vue'
 import { useRouter} from 'vue-router'
 import { useStore } from 'vuex'
 import { initAllTable,  
@@ -160,7 +190,7 @@ import { DataItem, FormState} from '../util/interface'
 
 export default defineComponent({
   components: {
-    
+    PlusOutlined,
   },
   setup() {
     initAllTable()
@@ -500,23 +530,6 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-.editable-row-operations a {
-  margin-right: 8px;
-}
 
-.a-list {
-  background-color: azure;
-  display: block;
-  width: 100%;
-  line-height: 20px; /* 将行间距设置为 20px */
-  padding: 0px 10px;
-  border-top: 1px solid aquamarine;
-  border-bottom: 1px solid aquamarine;
-  color: black;
-}
-
-.a-list:hover {
-  background-color: aqua;
-}
 
 </style>
