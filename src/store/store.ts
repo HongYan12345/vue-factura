@@ -1,12 +1,13 @@
 
 import Vuex from "vuex"
 import {ref} from "vue"
-import { DataItem, FormState} from '../util/interface'
+import { DataItem, FormState, EuroFinal} from '../util/interface'
 
 
 export const store = new Vuex.Store({
   state: {
     dataArray: new Array<DataItem>(),
+    dataFinal:ref<EuroFinal>(),
     data_empresa:ref<FormState>(),
     data_cliente:ref<FormState>(),
     euroBase: 0,
@@ -23,7 +24,11 @@ export const store = new Vuex.Store({
       state.isIva = objStorage.isIva;
       state.isRe = objStorage.isRe;
     },
-
+    saveFinal: (state, objStorage) => {
+      //这里有问题
+      state.dataFinal = objStorage
+      console.log("up final")
+    },
     saveCliente: (state, objStorage) => {
       state.data_cliente = objStorage 
     },

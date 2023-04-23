@@ -16,3 +16,12 @@ export interface FormState{
     poblation: string;
     telefono: string;
   }
+
+  export interface EuroFinal{
+    total: string;
+    dto: string;
+    base: string;
+    iva: string;
+    re: string;
+    total_final: string;
+  }

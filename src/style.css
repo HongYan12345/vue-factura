@@ -27,8 +27,8 @@
 
 .a-list {
   background-color: azure;
-  display: block;
-  width: 100%;
+  display: inline-block;
+  width: 70%;
   line-height: 20px; /* 将行间距设置为 20px */
   padding: 0px 10px;
   border-top: 1px solid aquamarine;
@@ -39,3 +39,56 @@
 .a-list:hover {
   background-color: aqua;
 }
+
+
+
+#exportPdf{
+  border: 1px solid grey;
+}
+
+@media screen and (max-width: 400px) {
+  #exportPdf {
+    /* 这里设置手机端样式 */
+    font-size: 8px;
+  }
+  .table1
+  {
+    width: 100%;
+    height: 100%;
+    transform: scale(0.8);
+    transform-origin: top left;
+
+  }
+
+  .table2{
+    width: 100%;
+    height: 100%;
+    transform: scale(0.7);
+    transform-origin: top left;
+  }
+}
+
+@media screen and (min-width: 400px) {
+  #exportPdf {
+    /* 这里设置电脑端样式 */
+    width: 700px; /* 设置一个固定宽度 */
+    margin: 0 auto; /* 水平居中 */
+    font-size: 15px;
+  }
+  .table1
+  {
+    width: 100%;
+    height: 100%;
+    transform: scale(1);
+    transform-origin: top left;
+
+  }
+
+  .table2{
+    width: 100%;
+    height: 100%;
+    transform: scale(1);
+    transform-origin: top left;
+  }
+}
+

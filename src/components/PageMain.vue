@@ -1,6 +1,8 @@
 <template>
-
-  <a-collapse v-model:activeKey="activeKey" :bordered="false" style="background-color:gray;" expandIconPosition="right">
+<div v-if="error">
+    <a-alert message="Error Text" type="error" :visible="error" />
+  </div>
+  <a-collapse :bordered="false" style="background-color:gray;" expandIconPosition="right">
     
     <a-collapse-panel>
     <template #header>
@@ -10,25 +12,40 @@
         <div class="spacer"></div>
       </div>
     </template>
+    <a-row :gutter="16">
+    <a-col :xs="18" :sm="12" :md="12" :lg="6">
+      <a-input-number v-model:value="dto" @change="calcula"  addon-before="DTO" :min="0" :max="99">%</a-input-number>
+    </a-col>
+    <a-col :xs="8" :sm="12" :md="12" :lg="6">
+      <a-checkbox :checked="isIva" @click="checkIva">+21%IVA</a-checkbox>
+    </a-col>
+    <a-col :xs="8" :sm="12" :md="12" :lg="6">
+      <a-checkbox :checked="isRe" @click="checkRe">+5.2%R.E.</a-checkbox>
+       
+    </a-col>
+  </a-row>
     <a-row>
         <a-col :span="12">
           &nbsptotal:</a-col>
           <a-col :span="12" class="text-right">
           {{total.toFixed(2)}}
         </a-col>
-
-        <a-col :span="12">
+      </a-row>
+      <a-row v-if="dto>0">
+        <a-col :span="12" >
           &nbsp{{dto}}%DTO:</a-col>
           <a-col :span="12" class="text-right">
           -{{Number(total * 0.01 * dto).toFixed(2)}}
         </a-col>
-
+      </a-row>
+      <a-row v-if="isIva">
         <a-col :span="12">
           &nbsp21%IVA:</a-col>
           <a-col :span="12" class="text-right">
           {{iva.toFixed(2)}}
         </a-col>
-
+      </a-row>
+      <a-row v-if="isRe">
         <a-col :span="12">
           &nbsp5.2%R.E:</a-col>
           <a-col :span="12" class="text-right">
@@ -38,19 +55,27 @@
     
     </a-collapse-panel>
   </a-collapse>
-  <a-row :gutter="16">
-    <a-col :xs="18" :sm="12" :md="12" :lg="6">
-      <a-input-number v-model:value="dto" @change="calcula"  addon-before="DTO" addon-after="%" :min="0" :max="99"></a-input-number>
-    </a-col>
-    <a-col :xs="12" :sm="12" :md="12" :lg="6">
-      <a-checkbox :checked="isIva" @click="checkIva">+21%IVA</a-checkbox>
-    </a-col>
-    <a-col :xs="12" :sm="12" :md="12" :lg="6">
-      <a-checkbox :checked="isRe" @click="checkRe">+5.2%R.E.</a-checkbox>
-       
+  
+ 
+  
+
+  <a-row>
+    <a-col :span="24">
+      <a-list item-layout="horizontal" :data-source="dataSource" :locale="{ emptyText: ' ' }">
+        <template #renderItem="{ item }">
+          <a-list-item>
+            <a class="a-list" @click="editProducto(item)">
+               <h3>{{item.euros}} €, {{item.codigo}}</h3>
+              <div>{{item.cantidad}} x {{item.precio}} €</div>
+            </a>
+            <a-button @click="deleteProducto(item.key, item.euros)">delete</a-button>
+          </a-list-item>
+        </template>
+      </a-list>
+      <a-button @click="addProducto" class="btn-add" block><template #icon><PlusOutlined /></template></a-button>
     </a-col>
   </a-row>
-  <a-row>
+ <a-row>
     
        <a-col :xs="24" :sm="12" :md="8" :lg="6">
           <a-button @click="clearTable">{{$t('clear')}}</a-button>
@@ -107,7 +132,7 @@
     </a-modal>
     </a-col>
   </a-row>
-<a-button @click="addProducto" class="btn-add" block><template #icon><PlusOutlined /></template></a-button>
+
    <a-modal
       v-model:visible="add_producto"
       title="add"
@@ -141,31 +166,6 @@
     >
         </a-select>
     </a-modal>
-
-  
-
-  <div v-if="error">
-    <a-alert message="Error Text" type="error" :visible="error" />
-  </div>
-
-  
-
-  <a-row>
-    <a-col :span="24">
-      <a-list item-layout="horizontal" :data-source="dataSource" :locale="{ emptyText: '' }">
-        <template #renderItem="{ item }">
-          <a-list-item>
-            <a class="a-list" @click="editProducto(item)">
-               <h3>{{item.euros}} €, {{item.codigo}}</h3>
-              <div>{{item.cantidad}} x {{item.precio}} €</div>
-            </a>
-            <a-button @click="deleteProducto(item.key, item.euros)">delete</a-button>
-          </a-list-item>
-        </template>
-      </a-list>
-    </a-col>
-  </a-row>
-
   <a-row>
     <a-col :xs="24" :sm="12" :md="8" :lg="6">
       <a-button @click="goPdf">导出</a-button>
@@ -396,6 +396,14 @@ export default defineComponent({
         dto:data.dto,
         isRe:data.isRe,
         isIva:data.isIva,
+      })
+      store.commit("saveFinal",{
+        total:data.total,
+        dto:data.dto,
+        base:0,
+        iva:data.iva,
+        re:data.re,
+        total_final:data.total_euros
       })
       store.commit("saveEmpresa",{
           name: data.empresa_name,
