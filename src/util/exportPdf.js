@@ -1,29 +1,18 @@
 import html2Canvas from 'html2canvas'
 import JsPDF from 'jspdf'
+import { nextTick } from 'vue';
 
 export async function export_pdf(html){
-  const exportPdfElement = document.querySelector('#exportPdf');
-
-  // 备份原始 style
-  const originalStyle = exportPdfElement.getAttribute('style') || '';
-
-  // 将 style 设置为 "all: initial"
-  exportPdfElement.setAttribute('style', 'all: initial');
-
-  // 等待 CSS 加载
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  // 还原原始 style
-  exportPdfElement.setAttribute('style', originalStyle);
     let top = html
       if (top != null) {
         top.scrollIntoView();
         top = null;
       }
-      let title = "this.exportPDFtitle";
-      setTimeout(() => {
-      html2Canvas(document.querySelector('#exportPdf'), {
-        allowTaint: true,useCORS: true 
+      let title = "title";
+      const container = document.querySelector('#exportPdf')
+      
+      html2Canvas(container, {
+        useCORS: true 
       }).then(function (canvas) {
         // 获取canvas画布的宽高
         let contentWidth = canvas.width;
@@ -55,6 +44,8 @@ export async function export_pdf(html){
           }
         }
         PDF.save(title + '.pdf');
-      })}, 1000);
+        
+      })
       
 }
+

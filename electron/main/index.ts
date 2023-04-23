@@ -1,6 +1,7 @@
-import { app, BrowserWindow, shell, ipcMain } from 'electron'
+import { app, BrowserWindow, shell, ipcMain, session } from 'electron'
 import { release } from 'node:os'
 import { join } from 'node:path'
+
 
 // The built directory structure
 //
@@ -75,7 +76,18 @@ async function createWindow() {
 }
 
 app.whenReady().then(createWindow)
-
+app.on('ready', () => {
+  // 启用 CORS
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: Object.assign(details.responseHeaders, {
+        'Access-Control-Allow-Origin': ['*'],
+        'Access-Control-Allow-Methods': ['GET, POST, PUT, DELETE, PATCH, OPTIONS'],
+        'Access-Control-Allow-Headers': ['X-Requested-With, Content-Type, Authorization'],
+      }),
+    });
+  });
+})
 app.on('window-all-closed', () => {
   win = null
   if (process.platform !== 'darwin') app.quit()
