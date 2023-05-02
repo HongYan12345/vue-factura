@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div style="background-color:#47B28C; padding:10px 0 0">
     <a-dropdown class="lenguage" :trigger="['click']">
       <template #overlay>
         <a-menu @click="handleMenuClick">

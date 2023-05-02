@@ -4,12 +4,13 @@ body{
 
 #app {
   max-width: 1280px;
-  padding: 10px 0 5px ;
+  padding: 0px 0 10px ;
   
 }
 
 .btn-main{
   background-color: #47B28C !important;
+  border-color: #47B28C !important;
   color: aliceblue !important;
 }
 .btn-main:hover, .btn-main:focus {
@@ -20,6 +21,16 @@ body{
 
 .collapse-total{
 
+}
+.ant-collapse-content-box {
+  background-color:  #b8d6ce !important;
+}
+
+.btn-next{
+  background-color: #008661 !important;
+  color: #fff !important;
+  border-top-left-radius: 10px !important;
+  border-bottom-left-radius: 10px !important;
 }
 
 .btn-crear{
