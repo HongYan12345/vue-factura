@@ -19,6 +19,9 @@ const messages={
     total: "Precio total",
     total_euro: "Precio final",
     export: "Exportar",
+    step1: "Ingresar producto",
+    step2:"Elegir cliente",
+    step3:"Exportar factura",
   },
   en: {
     lenguage: "Lenguage",
@@ -38,6 +41,9 @@ const messages={
     total: "Total price",
     total_euro: "Final price",
     export: "Export",
+    step1:"Enter Product",
+    step2:"Select client",
+    step3:"Export facture",
   },
   zh: {
     lenguage: "语言",
@@ -57,7 +63,9 @@ const messages={
     total: "总价格",
     total_euro: "最终价格",
     export: "导出表格",
-
+    step1:"输入商品",
+    step2:"选择客户",
+    step3:"导出发票",
   },
 };
 

@@ -3,6 +3,8 @@ import {createRouter, createWebHistory} from "vue-router"
 const pdf = () => import("../components/PagePdf.vue")
 const main = () => import("../components/PageMain.vue")
 const client = () => import("../components/PageClient.vue")
+const table = () => import("../components/PageTable.vue")
+const company = () => import("../components/PageCompany.vue")
 
 const routes = [
     
@@ -22,7 +24,19 @@ const routes = [
         path : "/client",
         name : "client",
         component : client
-    }
+    },
+
+    {
+        path : "/table",
+        name : "table",
+        component : table
+    },
+
+    {
+        path : "/company",
+        name : "company",
+        component : company
+    },
 
 ]
 

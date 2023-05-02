@@ -18,6 +18,7 @@ export const store = new Vuex.Store({
 
   mutations: {
     saveData: (state, objStorage) => {
+      console.log("[store]savaArray:",objStorage)
       state.dataArray = objStorage.dataArray;
       state.euroBase = objStorage.euroBase;
       state.dto = objStorage.dto;
@@ -25,9 +26,8 @@ export const store = new Vuex.Store({
       state.isRe = objStorage.isRe;
     },
     saveFinal: (state, objStorage) => {
-      //这里有问题
       state.dataFinal = objStorage
-      console.log("up final")
+      console.log("[store]savaFinal:",objStorage)
     },
     saveCliente: (state, objStorage) => {
       state.data_cliente = objStorage 
@@ -39,10 +39,5 @@ export const store = new Vuex.Store({
 
   },
 
-  actions: {
-    saveData({ commit }, payload) {
-      console.log("[Store:] saveData", payload);
-      commit("saveData", payload);
-    },
-  }
+  
 });

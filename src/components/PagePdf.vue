@@ -4,12 +4,19 @@
       <a-button @click="goBack">back</a-button>
     </div>
     <a-space direction="vertical" :size="12">
-      <a-date-picker v-model:value="date" value-format="DD/MM/YYYY"/>
-      <a-input-number v-model:value="num" :min="1"></a-input-number>
+      <a-date-picker v-model:value="date" value-format="DD/MM/YYYY" :showToday="false"/>
+      <a-input-number addon-before="Nº" v-model:value="num" :min="1"></a-input-number>
+      <a-radio-group v-model:value="forma" button-style="solid" @change="handleChange">
+        <a-radio-button value="EFECTIVO">EFECTIVO</a-radio-button>
+        <a-radio-button value="TRANSFERENCIA">TRANSFERENCIA</a-radio-button>
+        <a-radio-button value="TARJETA">TARJETA</a-radio-button>
+      </a-radio-group>
     </a-space>
     <div id="exportPdf" ref="exportpdf">
-      <div>Nº: {{num}}</div>
-      <div>{{date}}</div>
+      <div style="text-align: right">Nº: {{num}}</div>
+      <div style="text-align: right">{{date}}</div>
+      <div style="text-align: right">{{forma}}</div>
+      <br/>
       <div style="display: flex">
         <div style="flex: 1">{{ data_empresa.name }}</div>
         <div style="flex: 1; text-align: right">{{ data_cliente.name }}</div>
@@ -41,70 +48,82 @@
         </div>
       </div>
 
-      <table
-        class="table1"
-        style="width: 100%; border-collapse: collapse; margin-top: 20px"
-      >
-        <thead>
-          <tr>
-            <th style="border: 1px solid #000; padding: 5px">cantidad</th>
-            <th style="border: 1px solid #000; padding: 5px">precio</th>
-            <th style="border: 1px solid #000; padding: 5px">codigo</th>
-            <th style="border: 1px solid #000; padding: 5px">articulo</th>
-            <th style="border: 1px solid #000; padding: 5px">euros</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in dataSource" :key="item.key">
-            <td style="border: 1px solid #000; padding: 5px">
-              {{ item.cantidad }}
-            </td>
-            <td style="border: 1px solid #000; padding: 5px">
-              {{ item.precio }}
-            </td>
-            <td style="border: 1px solid #000; padding: 5px">
-              {{ item.codigo }}
-            </td>
-            <td style="border: 1px solid #000; padding: 5px">
-              {{ item.articulo }}
-            </td>
-            <td style="border: 1px solid #000; padding: 5px">
-              {{ item.euros }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <table
-        class="table2"
-        style="width: 100%; border-collapse: collapse; margin-top: 20px"
-      >
-        <thead>
-          <tr>
-            <th style="border: 1px solid #000; padding: 5px">TOTAL BRUTO</th>
-            <th style="border: 1px solid #000; padding: 5px">%DTO</th>
-            <th style="border: 1px solid #000; padding: 5px">BASE</th>
-            <th style="border: 1px solid #000; padding: 5px">21%IVA</th>
-            <th style="border: 1px solid #000; padding: 5px">%R.E</th>
-            <th style="border: 1px solid #000; padding: 5px">TOTAL EUROS</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in dataSource_final" :key="item.total">
-            <td style="border: 1px solid #000; padding: 5px">
-              {{ item.total }}
-            </td>
-            <td style="border: 1px solid #000; padding: 5px">{{ item.dto }}</td>
-            <td style="border: 1px solid #000; padding: 5px">
-              {{ item.base }}
-            </td>
-            <td style="border: 1px solid #000; padding: 5px">{{ item.iva }}</td>
-            <td style="border: 1px solid #000; padding: 5px">{{ item.re }}</td>
-            <td style="border: 1px solid #000; padding: 5px">
-              {{ item.total_final }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+     <table style="width: 90%; border-collapse: collapse; margin-top: 20px; margin-left: auto; margin-right: auto;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #000; padding: 3px; background-color: white;">cantidad</th>
+      <th style="border: 1px solid #000; padding: 3px; background-color: white;">precio</th>
+      <th style="border: 1px solid #000; padding: 3px; background-color: white;">codigo</th>
+      <th style="border: 1px solid #000; padding: 3px; background-color: white;">articulo</th>
+      <th style="border: 1px solid #000; padding: 3px; background-color: white;">euros</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr v-for="item in dataSource" :key="item.key">
+      <td style="border: 1px solid #000; padding: 2px; background-color: white;">
+        {{ item.cantidad }}
+      </td>
+      <td style="border: 1px solid #000; padding: 2px; background-color: white;">
+        {{ item.precio }}
+      </td>
+      <td style="border: 1px solid #000; padding: 2px; background-color: white;">
+        {{ item.codigo }}
+      </td>
+      <td style="border: 1px solid #000; padding: 2px; background-color: white;">
+        {{ item.articulo }}
+      </td>
+      <td style="border: 1px solid #000; padding: 2px; background-color: white;">
+        {{ item.euros }}
+      </td>
+    </tr>
+    <tr v-for="n in (10 - dataSource.length)" v-if="dataSource.length < 10" style="border-left:1px solid #000; border-right:1px solid #000;">
+      <td style="background-color: white;">&nbsp;</td>
+      <td style="background-color: white;">&nbsp;</td>
+      <td style="background-color: white;">&nbsp;</td>
+      <td style="background-color: white;">&nbsp;</td>
+      <td style="background-color: white;">&nbsp;</td>
+    </tr>
+    <tr v-for="item in dataSource_final" :key="item.total">
+      <td colspan="5">
+        <table style="width: 100%; border-collapse: collapse; margin-top: 0; border: none;">
+          <thead>
+            <tr>
+              <th style="border: 1px solid #000; padding: 3px; background-color: white;">TOTAL BRUTO</th>
+              <th style="border: 1px solid #000; padding: 3px; background-color: white;">%DTO</th>
+              <th style="border: 1px solid #000; padding: 3px; background-color: white;">BASE</th>
+              <th style="border: 1px solid #000; padding: 3px; background-color: white;">21%IVA</th>
+              <th style="border: 1px solid #000; padding: 3px; background-color: white;">%R.E</th>
+              <th style="border: 1px solid #000; padding: 3px; background-color: white;">TOTAL EUROS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="border: 1px solid #000; padding: 5px; background-color: white;">
+                {{ item.total }}
+              </td>
+              <td style="border: 1px solid #000; padding: 5px; background-color: white;">
+                {{ item.dto }}
+              </td>
+              <td style="border: 1px solid #000; padding: 5px; background-color: white;">
+                {{ item.base }}
+              </td>
+              <td style="border: 1px solid #000; padding: 5px; background-color: white;">
+                {{ item.iva }}
+              </td>
+              <td style="border: 1px solid #000; padding: 5px; background-color: white;">
+                {{ item.re }}
+              </td>
+              <td style="border: 1px solid #000; padding: 5px; background-color: white;">
+                {{ item.total_final }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
     </div>
     <div>
       <a-button @click="exportPdf">export</a-button>
@@ -119,13 +138,17 @@ import { useRouter } from "vue-router";
 import { export_pdf } from "../util/exportPdf";
 import { useStore } from "vuex";
 import { DataItem, EuroFinal, FormState } from "../util/interface";
-import type { Dayjs } from "dayjs";
 import dayjs from 'dayjs';
+import { DatePicker } from 'ant-design-vue';
 
 export default {
-  components: {},
+  components: { DatePicker},
   setup() {
     const data = reactive({
+      forma:ref('EFECTIVO'),
+      date: ref(dayjs().format('DD/MM/YYYY')),
+      num: "",
+
       data_empresa: ref<FormState>({
         name: "",
         direccion: "",
@@ -215,8 +238,7 @@ export default {
           key: "total_final",
         },
       ],
-      date: ref<Dayjs>(),
-      num: "",
+      
     });
     const refData = toRefs(data);
     const router = useRouter();
@@ -233,6 +255,10 @@ export default {
       return dayjs().format('YYYY-MM-DD HH:mm:ss');
     };
 
+    const handleChange = () => {
+      console.log(data.forma)
+    }
+
     onMounted(() => {
       data.dataSource = store.state.dataArray;
       data.data_cliente = store.state.data_cliente;
@@ -247,6 +273,7 @@ export default {
       goBack,
       exportPdf,
       today,
+      handleChange,
     };
   },
 };

@@ -8,7 +8,6 @@ import router from './route';
 import {store}  from "./store/store";
 import VueI18n from './language/index'
 
- 
 
 createApp(App)
   .use(Antd)

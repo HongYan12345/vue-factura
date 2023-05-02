@@ -1,8 +1,32 @@
+body{
+  background-color:beige !important;
+}
+
 #app {
   max-width: 1280px;
+  padding: 10px 0 5px ;
   
-  padding: 2rem;
-  
+}
+
+.btn-main{
+  background-color: #47B28C !important;
+  color: aliceblue !important;
+}
+.btn-main:hover, .btn-main:focus {
+  background-color: #008661 !important;
+  border-color: #008661 !important;
+  background: #fff;
+}
+
+.collapse-total{
+
+}
+
+.btn-crear{
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 80px 60px  !important;
 }
 
 .editable-row-operations a {
@@ -26,24 +50,17 @@
 
 
 .a-list {
-  background-color: azure;
-  display: inline-block;
-  width: 70%;
-  line-height: 20px; /* 将行间距设置为 20px */
+
   padding: 0px 10px;
-  border-top: 1px solid aquamarine;
-  border-bottom: 1px solid aquamarine;
-  color: black;
+  
 }
 
-.a-list:hover {
-  background-color: aqua;
-}
 
 
 
 #exportPdf{
   border: 1px solid grey;
+  padding: 10px;
 }
 
 @media screen and (max-width: 400px) {
