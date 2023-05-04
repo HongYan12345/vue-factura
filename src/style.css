@@ -1,5 +1,6 @@
 body{
   background-color:beige !important;
+  
 }
 
 #app {
@@ -8,7 +9,59 @@ body{
   
 }
 
+.ant-menu-item-selected{
+  color: aliceblue !important;
+}
+
+.ant-menu-item-selected::after, .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-selected::after {
+  border-bottom: 2px solid aliceblue !important;
+}
+.main-menu{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  background-color: #47B28C !important;
+}
+
+/*添加商品中的按钮*/
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* 设置单个按钮居中 */
+.center-button {
+  margin: 0 auto;
+}
+
+.ant-menu-title-content{
+  margin: 0 auto !important;
+}
+
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item, .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu {
+  white-space: normal !important;
+  text-overflow: clip !important;
+  overflow: visible !important;
+  max-width: none !important;
+  padding: 0, 10px !important;
+}
+
+/* 取消 a-menu-item 内部 a 标签的文本溢出和文本截断效果 */
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item, .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu a {
+  white-space: normal !important;
+  text-overflow: clip !important;
+  overflow: visible !important;
+  max-width: none !important;
+}
+
+.btn-add{
+  height: 40px !important;
+}
+
 .btn-main{
+  padding: 10px 10px 30px 10px !important;
   background-color: #47B28C !important;
   border-color: #47B28C !important;
   color: aliceblue !important;
@@ -33,6 +86,13 @@ body{
   border-bottom-left-radius: 10px !important;
 }
 
+.btn-back{
+  background-color: #008661 !important;
+  color: #fff !important;
+  border-top-right-radius: 10px !important;
+  border-bottom-right-radius: 10px !important;
+}
+
 .btn-crear{
   display: inline-flex !important;
   align-items: center !important;
@@ -48,15 +108,30 @@ body{
   text-align: right;
 }
 
-.spacer {
+.space {
   flex-grow: 1;
 }
 
-.panel-header {
+.ant-menu-item:focus{
+  color: #fff !important;
+}
+
+
+.ant-collapse-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: space-between !important;
   
+  
+}
+
+.large-font {
+  font-size: 24px; /* 根据需要调整字体大小 */
+  font-weight:550;
+}
+
+.list-font{
+  font-size: 20px!important;
+  font-weight:500;
 }
 
 
@@ -78,6 +153,7 @@ body{
   #exportPdf {
     /* 这里设置手机端样式 */
     font-size: 8px;
+    background-color: white;
   }
   .table1
   {
@@ -102,6 +178,7 @@ body{
     width: 700px; /* 设置一个固定宽度 */
     margin: 0 auto; /* 水平居中 */
     font-size: 15px;
+    background-color: white;
   }
   .table1
   {

@@ -1,8 +1,15 @@
 <template>
-  <div>
-      <a-button @click="goBack">back</a-button>
+  <div class="button-container">
+      <a-button @click="goBack" class="btn-back" size="large">返回</a-button>
+       <a-button @click="goPdf" class="btn-next" size="large">导出</a-button>
     </div>
   <div>
+  <div>
+    <a class="data_empresa" @click="modificaDato">
+      
+      {{empresa_name}}
+    </a>
+  </div>
   <a-select
     v-model:value="client"
     show-search
@@ -13,12 +20,8 @@
   </a-select>
 </div>
   <a-row :gutter="16">
-    <a-col :xs="24" :sm="12" :md="8" :lg="6">
-      <a-button @click="goClient">{{$t('cliente')}}</a-button>
-    </a-col>
    
      <a-col :xs="24" :sm="12" :md="8" :lg="6">
-      <a-button @click="modificaDato">{{$t('modifica_comp')}}</a-button>
       <a-modal
       v-model:visible="modifica_dato"
       title="Title"
@@ -44,12 +47,6 @@
     </a-col>
   </a-row>
 
-   
-  <a-row>
-    <a-col :xs="24" :sm="12" :md="8" :lg="6">
-      <a-button @click="goPdf">导出</a-button>
-    </a-col>
-  </a-row>
   
 </template>
 
@@ -158,14 +155,6 @@ export default {
       })
     }
 
-
-//管理客户
-    const goClient = () => {
-      router.push({
-        name: "client",
-      })
-    }
-
     
     const goBack = () => {
       saveAll()
@@ -217,7 +206,6 @@ export default {
       modificaDato,
       handleOkDato,
       goPdf,
-      goClient,
       goBack,
       confirmLoading,
     };

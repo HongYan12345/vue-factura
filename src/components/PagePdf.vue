@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <a-button @click="goBack">back</a-button>
+      <a-button @click="goBack" class="btn-back" size="large">back</a-button>
     </div>
     <a-space direction="vertical" :size="12">
       <a-date-picker v-model:value="date" value-format="DD/MM/YYYY" :showToday="false"/>
@@ -279,4 +279,7 @@ export default {
 };
 </script>
 <style scoped>
+#exportPdf {
+    background-color: white;
+}
 </style>

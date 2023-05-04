@@ -6,15 +6,14 @@
   <a-collapse
     :bordered="false"
     class="collapse-total"
-    expandIconPosition="right"
+    
   >
     <a-collapse-panel >
       <template #header>
-        <div class="panel-header">
-          <span>TOTAL EUROS:</span>
-          <span>{{ total_euros.toFixed(2) }}</span>
-          <div class="spacer"></div>
-        </div>
+        <div style="margin-left: 0;"> <span>TOTAL EUROS</span></div>
+        <div class="space"></div>
+        <div class="large-font"><span >{{ total_euros.toFixed(2) }}€</span></div>
+          
       </template>
       <a-row :gutter="16">
         <a-col :xs="18" :sm="12" :md="12" :lg="6">
@@ -77,7 +76,7 @@
   <a-row>
     <a-col :span="24">
       <a-button @click="addProducto" class="btn-add" type="text" block
-        ><template #icon><PlusOutlined /></template
+        ><template #icon><PlusOutlined style="font-size: 20px;"/></template
       ></a-button>
       <a-list
         class="a-list"
@@ -89,8 +88,12 @@
           <a-list-item>
             <div class="item-row">
               <a class="item-details" @click="editProducto(item)">
-                <h3>{{ item.euros }} €, {{ item.codigo }}</h3>
-                <div>{{ item.cantidad }} x {{ item.precio }} €</div>
+                <div>
+                  <div>{{item.codigo}}, {{item.articulo}}</div>
+                  <div>{{ item.cantidad }} x {{ Number(item.precio).toFixed(2) }} €</div>
+                </div>
+                
+                <div class="list-font">{{Number(item.euros).toFixed(2)}} €</div>
               </a>
               
             </div>
@@ -99,12 +102,13 @@
       </a-list>
     </a-col>
   </a-row>
-  <a-row>
+  <!-- <a-row>
     <a-col :xs="24" :sm="12" :md="8" :lg="6">
-      <a-button @click="clearTable">{{ $t("clear") }}</a-button>
+      
+      <a-button  @click="clearTable">{{ $t("clear") }}</a-button>
     </a-col>
     <a-button @click="modificaArticulo">{{ $t("modifica_articulo") }}</a-button>
-  </a-row>
+  </a-row> -->
 
   <a-modal
     v-model:visible="add_producto"
@@ -151,14 +155,17 @@
     >
     </a-select>
     <template #footer>
-       
-                <a-button
-                  size="large"
-                  type="primary"
-                  danger
-                  @click="deleteProducto(item.key, item.euros)"
-                  >删除</a-button>
-        <a-button key="submit" type="primary" size="large" :loading="loading" @click="saveProducto">保存</a-button>
+       <div class="button-container">
+        <a-button
+          v-if="isEdit!=''"
+          size="large"
+          type="primary"
+          danger
+          @click="deleteProducto(codigo)"
+          >删除</a-button>
+        <a-button :class="{ 'center-button': !isEdit!='' }" key="submit" type="primary" size="large"  @click="saveProducto">保存</a-button>
+       </div>
+        
       </template>
   </a-modal>
   
@@ -270,6 +277,11 @@ export default {
 
     const calcula = () => {
       console.log("[PageTable]funcion calcula");
+      data.total = 0
+      for (const item of dataSource.value) {
+        data.total += item.euros
+
+      }
       if (data.dto < 0) {
         data.dto = 0;
       }
@@ -316,11 +328,17 @@ export default {
       data.ante_euro = item.euros;
     };
     //delete producto
-    const deleteProducto = (key: string, euros: number) => {
-      data.total -= euros;
+    const deleteProducto = (codigo: string) => {
+      data.add_producto = false;
+      data.isEdit = "";
+      data.cantidad = "";
+      data.codigo = "";
+      data.precio = "";
+      data.articulo = "";
+      dataSource.value = dataSource.value.filter((item) => item.codigo !== codigo);
       calcula();
-      dataSource.value = dataSource.value.filter((item) => item.key !== key);
-    };
+    }
+
     //save producto
     const saveProducto = () => {
       confirmLoading.value = true;
@@ -336,8 +354,8 @@ export default {
             break;
           }
         }
-        data.total -= data.ante_euro;
-        data.ante_euro = 0;
+        //data.total -= data.ante_euro;
+        //data.ante_euro = 0;
         data.isEdit = "";
       } else {
         const newData = {
@@ -351,7 +369,7 @@ export default {
         dataSource.value.push(newData);
       }
       data.add_producto = false;
-      data.total += Number(data.cantidad) * Number(data.precio);
+      //data.total += Number(data.cantidad) * Number(data.precio);
       calcula();
       data.cantidad = "";
       data.codigo = "";
@@ -446,9 +464,10 @@ export default {
   border-bottom: 1px solid #eee;
 }
 .item-details {
+  color: black;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  
+  justify-content: space-between;
   flex-grow: 1;
 }
 .item-details h3 {
@@ -458,6 +477,9 @@ export default {
 .item-details div {
   font-size: 14px;
 }
+
+
+
 .delete-button {
   display: flex;
   align-items: center;

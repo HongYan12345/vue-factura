@@ -1,6 +1,21 @@
 <template>
-  <div style="background-color:#47B28C; padding:10px 0 0">
-    <a-dropdown class="lenguage" :trigger="['click']">
+<div class="main-menu">
+ <a-menu style="background-color:#47B28C; padding:10px 0 0" v-model:selectedKeys="current" mode="horizontal" @click="handleMenu">
+    <a-menu-item key="1">
+      <template #icon>
+        <mail-outlined />
+      </template>
+      发票
+    </a-menu-item>
+    <a-menu-item key="2">
+      <template #icon>
+        <appstore-outlined />
+      </template>
+      客户
+    </a-menu-item>
+  </a-menu>
+  
+<a-dropdown class="lenguage" :trigger="['click']">
       <template #overlay>
         <a-menu @click="handleMenuClick">
           <a-menu-item key="1">
@@ -19,27 +34,9 @@
         <DownOutlined />
       </a-button>
     </a-dropdown>
-  </div>
+    </div>
   <div>
     <router-view></router-view>
-  </div>
-  <div>
-      <div v-if="isCreate">
-      <a-steps direction="horizontal"  size="small" :responsive="false">
-      <template #progressDot="{ index, status, prefixCls }">
-        <a-popover>
-          <template #content>
-            <span>step {{ index }} status: {{ status }}</span>
-          </template>
-          <span :class="`${prefixCls}-icon-dot`" />
-        </a-popover>
-      </template>
-      <a-step :title="$t('step1')" />
-      <a-step :title="$t('step2')"  />
-      <a-step :title="$t('step3')" />
-    </a-steps>
-    <a-divider />
-    </div>
   </div>
 </template>
 <script lang="ts">
@@ -58,7 +55,7 @@ export default {
       isCreate:false,
     })
 
-    const current = ref<number>(0);
+    const current = ref(['1']);
     const refData = toRefs(data)
     const router = useRouter()
     //i18n
@@ -67,7 +64,9 @@ export default {
       locale.value = lang
     };
 
-    
+    // const titleClick = (e: Event) => {
+    //   console.log('titleClick', e);
+    // };
 
     const handleMenuClick: MenuProps['onClick'] = e => {
       if(e.key == 1){
@@ -76,11 +75,33 @@ export default {
       else if(e.key == 2){
         setLocale('en')
       }
-      else{
+      else if(e.key == 3){
         setLocale('zh')
       }
     }
 
+    const handleMenu: MenuProps['onClick'] = e => {
+      console.log(e.key)
+      console.log(current.value)
+      if(e.key == 1){
+        if(current.value[0]=="2"){
+          router.back()
+        }
+      }
+      else if(e.key == 2){
+        goClient()
+      }
+      else{
+        
+      }
+    }
+
+  //管理客户
+    const goClient = () => {
+      router.push({
+        name: "client",
+      })
+    }
     
 /*
     const changeStep =() => {
@@ -130,6 +151,7 @@ export default {
       ...refData,
       handleMenuClick,
       current,
+      handleMenu,
       t,
 
       //changeStep,

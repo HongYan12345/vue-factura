@@ -1,16 +1,16 @@
 <template>
   <div>
     <div>
-      <a-button @click="goBack">back</a-button>
+      <a-button @click="goBack" class="btn-back">返回</a-button>
     </div>
     
     <a-button type="primary" @click="showDrawer">
       <template #icon><PlusCircleOutlined /></template>
-      新建客户
+     
     </a-button>
     <a-button type="primary" @click="showTable">
       <template #icon><DeleteOutlined /></template>
-      删除老客户
+      
     </a-button>
     
     <a-drawer
