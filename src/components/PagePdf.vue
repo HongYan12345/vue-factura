@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div>
-      <a-button @click="goBack" class="btn-back" size="large">back</a-button>
+    <div class="button-container">
+      <a-button @click="goBack" class="btn-back" size="large">{{$t('back')}}</a-button>
     </div>
     <a-space direction="vertical" :size="12">
       <a-date-picker v-model:value="date" value-format="DD/MM/YYYY" :showToday="false"/>
       <a-input-number addon-before="Nº" v-model:value="num" :min="1"></a-input-number>
-      <a-radio-group v-model:value="forma" button-style="solid" @change="handleChange">
+      <a-radio-group class="btn-select" v-model:value="forma" button-style="solid" @change="handleChange">
         <a-radio-button value="EFECTIVO">EFECTIVO</a-radio-button>
         <a-radio-button value="TRANSFERENCIA">TRANSFERENCIA</a-radio-button>
         <a-radio-button value="TARJETA">TARJETA</a-radio-button>
@@ -140,6 +140,7 @@ import { useStore } from "vuex";
 import { DataItem, EuroFinal, FormState } from "../util/interface";
 import dayjs from 'dayjs';
 import { DatePicker } from 'ant-design-vue';
+import "../css/PdfStyle.css"
 
 export default {
   components: { DatePicker},

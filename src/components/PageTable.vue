@@ -1,6 +1,6 @@
 <template>
-<div class="text-right">
-      <a-button @click="goCompany" class="btn-next" size="large">下一步</a-button>
+<div class="btn-right">
+      <a-button @click="goCompany" class="btn-next" size="large">{{$t('next')}}</a-button>
       
     </div>
   <a-collapse
@@ -455,28 +455,7 @@ export default {
 };
 </script>
 <style scoped>
-.item-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px;
-  width: 100%;
-  border-bottom: 1px solid #eee;
-}
-.item-details {
-  color: black;
-  display: flex;
-  
-  justify-content: space-between;
-  flex-grow: 1;
-}
-.item-details h3 {
-  margin: 0;
-  font-size: 18px;
-}
-.item-details div {
-  font-size: 14px;
-}
+
 
 
 

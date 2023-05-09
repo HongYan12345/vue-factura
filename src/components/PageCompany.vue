@@ -1,23 +1,51 @@
 <template>
   <div class="button-container">
-      <a-button @click="goBack" class="btn-back" size="large">返回</a-button>
-       <a-button @click="goPdf" class="btn-next" size="large">导出</a-button>
+      <a-button @click="goBack" class="btn-back" size="large">{{$t('back')}}</a-button>
+       <a-button @click="goPdf" class="btn-next" size="large">{{$t('next')}}</a-button>
     </div>
   <div>
   <div>
-    <a class="data_empresa" @click="modificaDato">
+    <a  @click="modificaDato">
+      <div class="data_empresa">
+        <div class="company_title">
+          {{empresa_name}}
+        </div>
       
-      {{empresa_name}}
+      {{empresa_direccion}}
+      <br>
+      {{empresa_poblation}}
+      {{empresa_cp}}
+      <br>
+      NIF: {{empresa_nif}}
+      TEL: {{empresa_telefono}}
+
+      </div>
     </a>
   </div>
   <a-select
-    v-model:value="client"
+    
     show-search
     placeholder="Select a person"
     style="width: 100%"
-    :options="clients_list">
+    :options="clients_list"
+    @select="selectCliente"
+    >
 
   </a-select>
+  <div v-if="client_name" class="data_empresa">
+        <div class="company_title">
+          {{client_name}}
+        </div>
+      
+      {{client_direccion}}
+      <br>
+      {{client_poblation}}
+      {{client_cp}}
+      <br>
+      NIF: {{client_nif}}
+      TEL: {{client_telefono}}
+
+      </div>
 </div>
   <a-row :gutter="16">
    
@@ -75,8 +103,14 @@ export default {
       empresa_cp:"",
       empresa_poblation:"",
       empresa_nif:"",
+      client_name:"",
+      client_direccion:"",
+      client_telefono:"",
+      client_cp:"",
+      client_poblation:"",
+      client_nif:"",
+      client_forma:"",
       
-      client:"",
     })
     const refData = toRefs(data)
 
@@ -95,8 +129,6 @@ export default {
 //lista de clients
     const clients_list = ref([] as Array<{value: string, label: string}>)
     const confirmLoading = ref<boolean>(false);
-
-
 
 //添加自家公司信息
     const modificaDato = () => {
@@ -135,6 +167,7 @@ export default {
       queryAllTree().then((value) => {
         
         value.forEach((r: any) => {
+          console.log(r)
           clients_list.value.push({
             value: r.telefono,
             label: r.name + r.telefono,
@@ -148,7 +181,7 @@ export default {
 
     //export pdf
     const goPdf = () => {
-      console.log("cliente select: ",data.client)
+      console.log("cliente select: ",data.client_name)
       saveAll()
       router.push({
             name: "pdf",
@@ -166,6 +199,35 @@ export default {
       showClient()
       saveAll()
     }
+
+    const selectCliente = (value: any, option: any)=>{
+      console.log(value)
+      selectClient(Number(value)).then((value) => {
+        console.log("select dato client:",value)
+        if(value[0]){
+          data.client_name = value[0].name
+          data.client_direccion = value[0].direccion
+          data.client_telefono = value[0].telefono
+          data.client_cp = value[0].cp
+          data.client_poblation = value[0].poblation
+          data.client_nif = value[0].nif
+          data.client_forma = value[0].forma
+        }
+      })
+    }
+
+    const saveCliente = ()=>{
+
+        store.commit("saveCliente",{
+          name:data.client_name,
+          direccion: data.client_direccion,
+          telefono: data.client_telefono,
+          cp: data.client_cp,
+          poblation: data.client_poblation,
+          nif: data.client_nif,
+          forma: data.client_forma
+          })
+    }
     
     const saveAll = () =>{
       store.commit("saveEmpresa",{
@@ -176,21 +238,7 @@ export default {
           poblation: data.empresa_poblation,
           nif: data.empresa_nif
       })
-      selectClient(Number(data.client)).then((value) => {
-        console.log("select dato client:",value)
-        if(value[0]){
-          store.commit("saveCliente",{
-          name: value[0].name,
-          direccion: value[0].direccion,
-          telefono: value[0].telefono,
-          cp: value[0].cp,
-          poblation: value[0].poblation,
-          nif: value[0].nif,
-          forma: value[0].forma
-          })
-          
-        }
-      })
+      saveCliente()
     }
 
     onMounted(() => {
@@ -201,8 +249,9 @@ export default {
     return {
       ...refData,
       t,
+      store,
       clients_list,
-      
+      selectCliente,
       modificaDato,
       handleOkDato,
       goPdf,

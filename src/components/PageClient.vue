@@ -1,18 +1,44 @@
 <template>
   <div>
+    <!-- <div class="button-container">
+      <a-button @click="goBack" class="btn-back" size="large">{{$t('back')}}</a-button>
+    </div> -->
+
     <div>
-      <a-button @click="goBack" class="btn-back">返回</a-button>
+      <a-button @click="showDrawer" class="btn-add" type="text" block
+        ><template #icon><PlusOutlined style="font-size: 20px;"/></template
+      ></a-button>
+
+    
     </div>
     
-    <a-button type="primary" @click="showDrawer">
-      <template #icon><PlusCircleOutlined /></template>
-     
-    </a-button>
-    <a-button type="primary" @click="showTable">
-      <template #icon><DeleteOutlined /></template>
-      
-    </a-button>
-    
+    <div>
+      <a-list
+        class="a-list"
+        item-layout="horizontal"
+        :data-source="clients"
+        :locale="{ emptyText: ' ' }"
+      >
+        <template #renderItem="{ item }">
+          <a-list-item>
+            <div class="item-row">
+
+              <a class="item-details" @click="editCliente(item.value)">
+                <div>
+                  {{item.value.name}}
+                </div>
+                
+              </a>
+              <a-button @click="delectCliente(item.value.telefono)">
+                  <template #icon><DeleteOutlined /></template>
+                </a-button>
+            </div>
+          </a-list-item>
+        </template>
+      </a-list>
+    </div>
+
+
     <a-drawer
       title="创建新客户"
       :visible="visible"
@@ -24,7 +50,6 @@
 
       <a-form
         :model="formState"
-        
       >
         <a-form-item label="名字">
           <a-input v-model:value="formState.name" />
@@ -56,7 +81,7 @@
       </a-form>
     </a-drawer>
 
-    <a-drawer
+    <!-- <a-drawer
       title="删除老客户"
       :visible="visibleTable"
       :body-style="{ paddingBottom: '80px' }"
@@ -78,7 +103,7 @@
       
       <a-button @click="dbDelete">删除</a-button>
       
-    </a-drawer>
+    </a-drawer> -->
   </div>
 </template>
 
@@ -94,7 +119,7 @@ import {
   UnwrapRef,
 } from "vue"
 import { useRouter } from "vue-router"
-import { PlusCircleOutlined, DeleteOutlined} from '@ant-design/icons-vue'
+import { PlusOutlined, DeleteOutlined} from '@ant-design/icons-vue'
 import {
   initAllTable,
   insertClient,
@@ -105,7 +130,7 @@ import { FormState} from '../util/interface'
 
 export default {
   components: {
-    PlusCircleOutlined, DeleteOutlined
+    PlusOutlined, DeleteOutlined
   },
   setup() {
     const data = reactive({
@@ -184,17 +209,16 @@ export default {
       insertClient(dato)
     }
 
-    const dbDelete = (telefono: string) => {
+    const delectCliente = (telefono: string) => {
       deleteClient(Number(telefono))
-      queryAllTree().then((value) => {
-      })
+      updatePage()
     }
     const showClient = () => {
       clients.value = []
       queryAllTree().then((value) => {
         value.forEach((r: any) => {
           clients.value.push({
-            value: r.telefono,
+            value: r,
             label: r.name,
           })
         })
@@ -205,6 +229,15 @@ export default {
     const handleChange = () => {
       console.log(data.valueClient)
     }
+
+    const editCliente = (item: FormState) => {
+      
+    }
+    
+    const updatePage = () => {
+      showClient()
+    }
+
 
     onMounted(() => {
       console.log("up")
@@ -217,12 +250,11 @@ export default {
       onSubmit,
       goBack,
       showDrawer,
-      showTable,
       onClose,
       onCloseTable,
       visible,
       visibleTable,
-      dbDelete,
+      delectCliente,
       clients,
       handleChange,
     }
