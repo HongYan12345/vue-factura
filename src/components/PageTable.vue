@@ -176,29 +176,21 @@
 <script lang="ts">
 import {
   computed,
-  defineComponent,
   reactive,
   Ref,
   ref,
-  UnwrapRef,
   toRefs,
-  toRaw,
-  onUpdated,
   onMounted,
-  getCurrentInstance,
 } from "vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import {
-  initAllTable,
   insertArticulo,
-  queryAllTree,
   queryAllArticulo,
-  selectClient,
 } from "../util/dbSqlite";
 import { useI18n } from "vue-i18n";
-import { DataItem, FormState } from "../util/interface";
+import { DataItem } from "../util/interface";
 
 export default {
   components: {

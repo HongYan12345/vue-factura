@@ -59,6 +59,7 @@ const messages={
     clien:"客户",
     next:"下一步",
     back:"返回",
+    
     cliente: "客户管理",
     modifica_comp: "修改公司信息",
     modifica_person: "修改用户信息",

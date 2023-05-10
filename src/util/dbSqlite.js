@@ -2,21 +2,22 @@ const sqlite3 = require('sqlite3').verbose()
 let db
 
 // 连接数据库
-function conn () {
+function conn() {
   if (!db || !db.open) {
     db = new sqlite3.Database('base.db')
   }
   return db
 }
 
-export const initAllTable=()=>{
+export const initAllTable = () => {
   initTable()
   initTableArticulo()
   initTableEmpresa()
+  initTableFactura()
 }
 
 // 初始化数据表
-function initTable(){
+function initTable() {
   console.log("init table user")
   return new Promise((resolve, reject) => {
     let db = conn()
@@ -42,17 +43,18 @@ export const deleteClient = (telefono) => {
   return new Promise((resolve, reject) => {
     let db = conn()
     db.serialize(() => {
-      db.run("DELETE FROM user WHERE telefono=?",telefono, function(err) {
-        if(err){
-            console.log(err)
+      db.run("DELETE FROM user WHERE telefono=?", telefono, function (err) {
+        if (err) {
+          console.log(err)
         }
-        else{
-            console.log("Successful");
+        else {
+          console.log("Successful");
         }
-        db.close();})
+        db.close();
+      })
       resolve()
     })
-    
+
   })
 }
 
@@ -64,9 +66,9 @@ export const selectClient = (telefono) => {
         if (err) reject(err)
         resolve(rows || [])
       })
-      
+
     })
-    
+
   })
 }
 
@@ -81,7 +83,7 @@ export const queryAllTree = () => {
   })
 }
 
-function initTableArticulo(){
+function initTableArticulo() {
   console.log("init table articulo")
   return new Promise((resolve, reject) => {
     let db = conn()
@@ -107,21 +109,22 @@ export const deleteArticulo = (name) => {
   return new Promise((resolve, reject) => {
     let db = conn()
     db.serialize(() => {
-      db.run("DELETE FROM articulo WHERE name=?",name, function(err) {
-        if(err){
-            console.log(err)
+      db.run("DELETE FROM articulo WHERE name=?", name, function (err) {
+        if (err) {
+          console.log(err)
         }
-        else{
-            console.log("delete articulo Successful");
+        else {
+          console.log("delete articulo Successful");
         }
-        db.close();})
+        db.close();
+      })
       resolve()
     })
-    
+
   })
 }
 
-export const queryAllArticulo = () =>{
+export const queryAllArticulo = () => {
   console.log("show articulo")
   return new Promise((resolve, reject) => {
     let db = conn()
@@ -132,7 +135,7 @@ export const queryAllArticulo = () =>{
   })
 }
 
-function initTableEmpresa(){
+function initTableEmpresa() {
   console.log("init table empresa")
   return new Promise((resolve, reject) => {
     let db = conn()
@@ -159,17 +162,18 @@ export const deleteEmpresa = () => {
   return new Promise((resolve, reject) => {
     let db = conn()
     db.serialize(() => {
-      db.run("DELETE * FROM empresa", function(err) {
-        if(err){
-            console.log(err)
+      db.run("DELETE * FROM empresa", function (err) {
+        if (err) {
+          console.log(err)
         }
-        else{
-            console.log("delete empresa Successful");
+        else {
+          console.log("delete empresa Successful");
         }
-        db.close();})
+        db.close();
+      })
       resolve()
     })
-    
+
   })
 }
 
@@ -188,6 +192,66 @@ export const queryAllProducto = () => {
   return new Promise((resolve, reject) => {
     let db = conn()
     db.all('select * from producto order by name', (err, rows) => {
+      if (err) reject(err)
+      resolve(rows || [])
+    })
+  })
+}
+
+function initTableFactura() {
+  console.log("init table factura");
+  return new Promise((resolve, reject) => {
+    let db = conn();
+    db.serialize(() => {
+      db.run(`CREATE TABLE IF NOT EXISTS factura (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        factura_num INTEGER,
+        factura_date TEXT,
+        user TEXT,
+        empresa TEXT,
+        item_list TEXT,
+        forma TEXT,
+        euro_final TEXT
+    )`);
+      resolve();
+    });
+  });
+}
+export const insertFactura = (cliente, empresa, item_list, num, date, forma,euro_final) => {
+  return new Promise((resolve, reject) => {
+    let db = conn()
+    let prepare = db.prepare('replace into factura (factura_num, factura_date, user, empresa, item_list, forma, euro_final) values (?, ?, ?, ?, ?, ?, ?)')
+    prepare.run(num, date, cliente, empresa, item_list, forma, euro_final)
+    prepare.finalize(err => {
+      if (!err) resolve()
+    })
+  })
+}
+
+export const deleteFactura = (id) => {
+  return new Promise((resolve, reject) => {
+    let db = conn()
+    db.serialize(() => {
+      db.run("DELETE FROM user WHERE id=?", id, function (err) {
+        if (err) {
+          console.log(err)
+        }
+        else {
+          console.log("Successful");
+        }
+        db.close();
+      })
+      resolve()
+    })
+
+  })
+}
+
+export const queryFactura = () => {
+  console.log("show empresa")
+  return new Promise((resolve, reject) => {
+    let db = conn()
+    db.all('select * from factura', (err, rows) => {
       if (err) reject(err)
       resolve(rows || [])
     })

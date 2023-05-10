@@ -123,10 +123,12 @@
     </tr>
   </tbody>
 </table>
-
     </div>
     <div>
-      <a-button @click="exportPdf">export</a-button>
+      <a-button @click="savePdf">save</a-button>
+    </div>
+    <div>
+      <a-button @click="exportPdf">{{$t('export')}}</a-button>
     </div>
   </div>
 </template>
@@ -137,9 +139,11 @@ import { ref, reactive, toRefs, onMounted, onUpdated } from "vue";
 import { useRouter } from "vue-router";
 import { export_pdf } from "../util/exportPdf";
 import { useStore } from "vuex";
+import {
+  insertFactura } from "../util/dbSqlite"
 import { DataItem, EuroFinal, FormState } from "../util/interface";
 import dayjs from 'dayjs';
-import { DatePicker } from 'ant-design-vue';
+import { DatePicker, message } from 'ant-design-vue';
 import "../css/PdfStyle.css"
 
 export default {
@@ -260,6 +264,14 @@ export default {
       console.log(data.forma)
     }
 
+    const savePdf = () => {
+      const dataItemJson = JSON.stringify(data.dataSource);
+      const dataFinalJson = JSON.stringify(data.dataSource_final[0]);
+      const dataEmpresaJson = JSON.stringify(data.data_empresa);
+      const dataClienteJson = JSON.stringify(data.data_cliente);
+      insertFactura(dataClienteJson, dataEmpresaJson, dataItemJson, data.num, data.date, data.forma, dataFinalJson)
+    };
+
     onMounted(() => {
       data.dataSource = store.state.dataArray;
       data.data_cliente = store.state.data_cliente;
@@ -273,6 +285,7 @@ export default {
       ...refData,
       goBack,
       exportPdf,
+      savePdf,
       today,
       handleChange,
     };

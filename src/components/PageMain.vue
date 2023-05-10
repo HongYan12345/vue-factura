@@ -10,11 +10,12 @@
 
 <script lang="ts">
 import { defineComponent, reactive, toRefs,
-        onUpdated,} from 'vue'
+        onUpdated,
+        onMounted,} from 'vue'
 import { PlusOutlined} from '@ant-design/icons-vue'
 import { useRouter} from 'vue-router'
 import { useStore } from 'vuex'
-import { initAllTable } from '../util/dbSqlite'
+import { initAllTable ,queryFactura } from '../util/dbSqlite'
 import { useI18n} from "vue-i18n"
 
 
@@ -51,16 +52,15 @@ export default defineComponent({
       })
     }
 
+    const showFactura =() => {
+      queryFactura().then((value) => {
+        console.log("factura en base de dato:",value)
+      })
+    }
 
 
-
-    
-
-
-
-
-    onUpdated(() => {
-     
+    onMounted(() => {
+     showFactura()
     })
    
 
