@@ -10,7 +10,7 @@
   >
     <a-collapse-panel >
       <template #header>
-        <div style="margin-left: 0;"> <span>TOTAL EUROS</span></div>
+        <div style="margin-left: 0;"> <span>{{$t('total_euro')}}</span></div>
         <div class="space"></div>
         <div class="large-font"><span >{{ total_euros.toFixed(2) }}€</span></div>
           
@@ -64,14 +64,7 @@
     </a-collapse-panel>
   </a-collapse>
 
-  <a-modal
-    v-model:visible="modifica_articulo"
-    title="修改产品类型"
-    :confirm-loading="confirmLoading"
-    @ok="handleOkArticulo"
-  >
-    <a-input v-model:value="articulo_name">{{ $t("name_producto") }}:</a-input>
-  </a-modal>
+  
 
   <a-row>
     <a-col :span="24">
@@ -102,13 +95,7 @@
       </a-list>
     </a-col>
   </a-row>
-  <!-- <a-row>
-    <a-col :xs="24" :sm="12" :md="8" :lg="6">
-      
-      <a-button  @click="clearTable">{{ $t("clear") }}</a-button>
-    </a-col>
-    <a-button @click="modificaArticulo">{{ $t("modifica_articulo") }}</a-button>
-  </a-row> -->
+
 
   <a-modal
     v-model:visible="add_producto"
@@ -117,31 +104,28 @@
     @ok="saveProducto"
   >
     <a-row>
-      <a-col :span="5">数量：</a-col>
+      <a-col :span="5">{{$t('cantidad')}}：</a-col>
       <a-col :span="17">
         <a-input
           v-model:value="cantidad"
-          :bordered="false"
           class="text-right"
         ></a-input>
       </a-col>
     </a-row>
     <a-row>
-      <a-col :span="5">价格:</a-col>
+      <a-col :span="5">{{$t('precio')}}:</a-col>
       <a-col :span="17">
         <a-input
           v-model:value="precio"
-          :bordered="false"
           class="text-right"
         ></a-input>
       </a-col>
     </a-row>
     <a-row>
-      <a-col :span="5">型号:</a-col>
+      <a-col :span="5">{{$t('codigo')}}:</a-col>
       <a-col :span="17">
         <a-input
           v-model:value="codigo"
-          :bordered="false"
           class="text-right"
         ></a-input>
       </a-col>
@@ -162,8 +146,8 @@
           type="primary"
           danger
           @click="deleteProducto(codigo)"
-          >删除</a-button>
-        <a-button :class="{ 'center-button': !isEdit!='' }" key="submit" type="primary" size="large"  @click="saveProducto">保存</a-button>
+          >{{$t('delect')}}</a-button>
+        <a-button :class="{ 'center-button': !(isEdit!='') }" key="submit" type="primary" size="large"  @click="saveProducto">{{$t('save')}}</a-button>
        </div>
         
       </template>
@@ -212,8 +196,7 @@ export default {
       precio: "",
       articulo: "",
       isEdit: "",
-      modifica_articulo: false,
-      articulo_name: "",
+      
     });
     const refData = toRefs(data);
 
@@ -241,20 +224,6 @@ export default {
     const confirmLoading = ref<boolean>(false);
     //lista de articulo
     const articulo_list = ref([] as Array<{ value: string }>);
-
-    //add articulo
-    const modificaArticulo = () => {
-      data.modifica_articulo = true;
-    };
-    const handleOkArticulo = () => {
-      confirmLoading.value = true;
-      insertArticulo(data.articulo_name).then((value) => {
-        data.modifica_articulo = false;
-        confirmLoading.value = false;
-        data.articulo_name = "";
-        showArticulo();
-      });
-    };
 
     //calcula
     const checkRe = () => {
@@ -308,6 +277,11 @@ export default {
     //añadir producto
     const addProducto = () => {
       data.add_producto = true;
+      data.isEdit = "";
+      data.cantidad = "";
+      data.codigo = "";
+      data.precio = "";
+      data.articulo = "";
     };
     //modificar producto
     const editProducto = (item: DataItem) => {
@@ -440,8 +414,7 @@ export default {
       confirmLoading,
       goCompany,
       articulo_list,
-      modificaArticulo,
-      handleOkArticulo,
+      
     };
   },
 };

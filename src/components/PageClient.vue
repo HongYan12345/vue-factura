@@ -3,7 +3,11 @@
     <!-- <div class="button-container">
       <a-button @click="goBack" class="btn-back" size="large">{{$t('back')}}</a-button>
     </div> -->
-
+    <div>
+      <a-button @click="modificaArticulo">{{ $t("modifica_articulo") }}</a-button>
+    </div>
+    
+  
     <div>
       <a-button @click="showDrawer" class="btn-add" type="text" block
         ><template #icon><PlusOutlined style="font-size: 20px;"/></template
@@ -25,7 +29,7 @@
 
               <a class="item-details" @click="editCliente(item.value)">
                 <div>
-                  {{item.value.name}}
+                 {{item.value.name}} , {{item.value.telefono}} 
                 </div>
                 
               </a>
@@ -40,7 +44,7 @@
 
 
     <a-drawer
-      title="创建新客户"
+      :title="$t('cliente')"
       :visible="visible"
       :body-style="{ paddingBottom: '80px' }"
       :footer-style="{ textAlign: 'right' }"
@@ -51,59 +55,40 @@
       <a-form
         :model="formState"
       >
-        <a-form-item label="名字">
+        <a-form-item :label="$t('name')">
           <a-input v-model:value="formState.name" />
         </a-form-item>
-        <a-form-item label="电话">
+        <a-form-item :label="$t('telefono')">
           <a-input v-model:value="formState.telefono" />
         </a-form-item>
-        <a-form-item label="地址">
+        <a-form-item :label="$t('direccion')">
           <a-input v-model:value="formState.direccion" />
         </a-form-item>
-        <a-form-item label="区分">
+        <a-form-item :label="$t('poblation')">
           <a-input v-model:value="formState.poblation" />
         </a-form-item>
-        <a-form-item label="NIF">
+        <a-form-item :label="$t('nif')">
           <a-input v-model:value="formState.nif" />
         </a-form-item>
-        <a-form-item label="CP">
+        <a-form-item :label="$t('cp')">
           <a-input v-model:value="formState.cp" />
         </a-form-item>
-        <a-form-item label="付款方式">
-          <a-radio-group v-model:value="formState.forma">
-            <a-radio value="tarjeta">TARJETA</a-radio>
-            <a-radio value="efectivo">EFECTIVO</a-radio>
-          </a-radio-group>
-        </a-form-item>
         <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-          <a-button type="primary" @click="onSubmit">创建</a-button>
+          <a-button type="primary" @click="onSubmit">{{$t('crear')}}</a-button>
         </a-form-item>
       </a-form>
     </a-drawer>
 
-    <!-- <a-drawer
-      title="删除老客户"
-      :visible="visibleTable"
-      :body-style="{ paddingBottom: '80px' }"
-      :footer-style="{ textAlign: 'right' }"
-      @close="onCloseTable"
-    >
-      <a-select
-        v-model:value="valueClient"
-        show-search
-        placeholder="Select a person"
-        style="width: 200px"
-        :options="clients"
-        @change="handleChange"
-      >
-      </a-select>
-      <div>
-        {{ valueClient }}
-      </div>
-      
-      <a-button @click="dbDelete">删除</a-button>
-      
-    </a-drawer> -->
+    <a-modal
+    v-model:visible="modifica_articulo"
+    title="修改产品类型"
+    :confirm-loading="confirmLoading"
+    @ok="handleOkArticulo"
+  >
+    <a-input v-model:value="articulo_name">{{ $t("name_producto") }}:</a-input>
+  </a-modal>
+
+    
   </div>
 </template>
 
@@ -125,8 +110,12 @@ import {
   insertClient,
   deleteClient,
   queryAllTree,
+  insertArticulo,
+  queryAllArticulo,
 } from "../util/dbSqlite"
 import { FormState} from '../util/interface'
+import { update } from 'lodash-es'
+import { message } from 'ant-design-vue';
 
 export default {
   components: {
@@ -136,11 +125,15 @@ export default {
     const data = reactive({
       errorClient: false,
       valueClient: "",
+      modifica_articulo: false,
+      articulo_name: "",
     })
     const refData = toRefs(data)
     const router = useRouter()
-
+    const confirmLoading = ref<boolean>(false);
     const clients = ref([] as Array<{ value: string; label: string }>)
+    const articulo_list = ref([] as Array<{ value: string }>);
+
     const formState: UnwrapRef<FormState> = reactive({
       name: "",
       direccion: "",
@@ -164,6 +157,7 @@ export default {
       } else {
         data.errorClient = false
         console.log("submit!", toRaw(formState))
+        message.success('Submit client success')
         dbStart()
         onClose()
       }
@@ -178,16 +172,42 @@ export default {
 
     const onClose = () => {
       visible.value = false
-      showClient()
+      updatePage()
     }
 
+    //add articulo
+    const modificaArticulo = () => {
+      data.modifica_articulo = true;
+    };
+    const handleOkArticulo = () => {
+      confirmLoading.value = true;
+      insertArticulo(data.articulo_name).then((value) => {
+        data.modifica_articulo = false;
+        confirmLoading.value = false;
+        data.articulo_name = "";
+        showArticulo();
+      });
+    };
+
+    const showArticulo = () => {
+      queryAllArticulo().then((value) => {
+        console.log("[PageTable]articulo en base de dato:", value);
+        value.forEach((r: any) => {
+          articulo_list.value.push({
+            value: r.name,
+          });
+        });
+      });
+    };
+
     const visibleTable = ref<boolean>(false)
+
     const showTable = () => {
       visibleTable.value = true
     }
     const onCloseTable = () => {
       visibleTable.value = false
-      showClient()
+      updatePage()
     }
 
     const goBack = () => {
@@ -207,6 +227,14 @@ export default {
       }
       console.log("bd:", dato)
       insertClient(dato)
+      formState.name = "" 
+      formState.direccion = ""
+      formState.nif = ""
+      formState.forma = ""
+      formState.poblation = ""
+      formState.cp = ""
+      formState.telefono = ""
+      updatePage()
     }
 
     const delectCliente = (telefono: string) => {
@@ -219,7 +247,7 @@ export default {
         value.forEach((r: any) => {
           clients.value.push({
             value: r,
-            label: r.name,
+            label: r.name + ' ,' + r.telefono,
           })
         })
         console.log("lista clients:", clients.value)
@@ -231,7 +259,13 @@ export default {
     }
 
     const editCliente = (item: FormState) => {
-      
+      visible.value = true
+      formState.name = item.name
+      formState.telefono = item.telefono
+      formState.direccion = item.direccion
+      formState.nif = item.nif
+      formState.poblation = item.poblation
+      formState.cp = item.cp
     }
     
     const updatePage = () => {
@@ -252,11 +286,15 @@ export default {
       showDrawer,
       onClose,
       onCloseTable,
+      editCliente,
       visible,
       visibleTable,
       delectCliente,
       clients,
       handleChange,
+      modificaArticulo,
+      handleOkArticulo,
+      confirmLoading,
     }
   },
 }

@@ -140,7 +140,7 @@ function initTableEmpresa() {
   return new Promise((resolve, reject) => {
     let db = conn()
     db.serialize(() => {
-      db.run('CREATE TABLE IF NOT EXISTS empresa(telefono char(15) PRIMARY KEY, name char(50) NOT NULL, direccion char(200) NOT NULL, cp char(10) NOT NULL, poblation char(20) NOT NULL, nif char(15) NOT NULL)')
+      db.run('CREATE TABLE IF NOT EXISTS empresa(id INTEGER PRIMARY KEY, telefono char(15), name char(50) NOT NULL, direccion char(200) NOT NULL, cp char(10) NOT NULL, poblation char(20) NOT NULL, nif char(15) NOT NULL)')
       resolve()
     })
   })
@@ -149,9 +149,9 @@ function initTableEmpresa() {
 export const insertEmpresa = (data) => {
   return new Promise((resolve, reject) => {
     let db = conn()
-    let prepare = db.prepare('replace into empresa (telefono, name, direccion, cp, poblation, nif) values (?, ?, ?, ?, ?, ?)')
+    let prepare = db.prepare('replace into empresa (id, telefono, name, direccion, cp, poblation, nif) values (?, ?, ?, ?, ?, ?, ?)')
     console.log("update empresa")
-    prepare.run(data.telefono, data.name, data.direccion, data.cp, data.poblation, data.nif)
+    prepare.run(data.id, data.telefono, data.name, data.direccion, data.cp, data.poblation, data.nif)
     prepare.finalize(err => {
       if (!err) resolve()
     })

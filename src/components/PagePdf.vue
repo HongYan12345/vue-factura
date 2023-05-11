@@ -12,7 +12,10 @@
         <a-radio-button value="TARJETA">TARJETA</a-radio-button>
       </a-radio-group>
     </a-space>
-    <div id="exportPdf" ref="exportpdf">
+    <div id="exportPdf" ref="exportpdf" style="
+        border: 1px solid grey;
+        padding: 10px;
+        background-color: white;">
       <div style="text-align: right">Nº: {{num}}</div>
       <div style="text-align: right">{{date}}</div>
       <div style="text-align: right">{{forma}}</div>
@@ -125,7 +128,7 @@
 </table>
     </div>
     <div>
-      <a-button @click="savePdf">save</a-button>
+      <a-button @click="savePdf">{{$t('save')}}</a-button>
     </div>
     <div>
       <a-button @click="exportPdf">{{$t('export')}}</a-button>
@@ -293,7 +296,5 @@ export default {
 };
 </script>
 <style scoped>
-#exportPdf {
-    background-color: white;
-}
+
 </style>

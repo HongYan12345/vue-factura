@@ -137,6 +137,7 @@ export default {
     const handleOkDato = () => {
       confirmLoading.value = true
       const newData = {
+          id:1,
           name: data.empresa_name,
           direccion: data.empresa_direccion,
           telefono: data.empresa_telefono,
@@ -170,7 +171,7 @@ export default {
           console.log(r)
           clients_list.value.push({
             value: r.telefono,
-            label: r.name + r.telefono,
+            label: r.telefono + ' ' + r.name
           })
         })
         console.log("list_client:", clients_list)
