@@ -56,22 +56,22 @@
         :model="formState"
       >
         <a-form-item :label="$t('name')">
-          <a-input v-model:value="formState.name" />
+          <a-input v-model:value="formState.name" spellcheck="false"/>
         </a-form-item>
         <a-form-item :label="$t('telefono')">
-          <a-input v-model:value="formState.telefono" />
+          <a-input v-model:value="formState.telefono" spellcheck="false"/>
         </a-form-item>
         <a-form-item :label="$t('direccion')">
-          <a-input v-model:value="formState.direccion" />
+          <a-input v-model:value="formState.direccion" spellcheck="false"/>
         </a-form-item>
         <a-form-item :label="$t('poblation')">
-          <a-input v-model:value="formState.poblation" />
+          <a-input v-model:value="formState.poblation" spellcheck="false"/>
         </a-form-item>
         <a-form-item :label="$t('nif')">
-          <a-input v-model:value="formState.nif" />
+          <a-input v-model:value="formState.nif" spellcheck="false"/>
         </a-form-item>
         <a-form-item :label="$t('cp')">
-          <a-input v-model:value="formState.cp" />
+          <a-input v-model:value="formState.cp" spellcheck="false"/>
         </a-form-item>
         <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
           <a-button type="primary" @click="onSubmit">{{$t('crear')}}</a-button>

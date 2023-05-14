@@ -138,13 +138,13 @@
 
 
 <script lang="ts">
-import { ref, reactive, toRefs, onMounted, onUpdated } from "vue";
+import { ref, reactive, toRefs, onMounted} from "vue";
 import { useRouter } from "vue-router";
 import { export_pdf } from "../util/exportPdf";
 import { useStore } from "vuex";
 import {
   insertFactura } from "../util/dbSqlite"
-import { DataItem, EuroFinal, FormState } from "../util/interface";
+import { DataItem, FormState } from "../util/interface";
 import dayjs from 'dayjs';
 import { DatePicker, message } from 'ant-design-vue';
 import "../css/PdfStyle.css"

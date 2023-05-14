@@ -1,7 +1,7 @@
 <template>
-<div class="btn-right">
-      <a-button @click="goCompany" class="btn-next" size="large">{{$t('next')}}</a-button>
-      
+<div class="button-container">
+      <a-button @click="goBack" class="btn-back" size="large">{{$t('back')}}</a-button>
+       <a-button @click="goPdf" class="btn-next" size="large">{{$t('next')}}</a-button>
     </div>
   <a-collapse
     :bordered="false"
@@ -109,6 +109,7 @@
         <a-input
           v-model:value="cantidad"
           class="text-right"
+          spellcheck="false"
         ></a-input>
       </a-col>
     </a-row>
@@ -118,6 +119,7 @@
         <a-input
           v-model:value="precio"
           class="text-right"
+          spellcheck="false"
         ></a-input>
       </a-col>
     </a-row>
@@ -127,6 +129,7 @@
         <a-input
           v-model:value="codigo"
           class="text-right"
+          spellcheck="false"
         ></a-input>
       </a-col>
     </a-row>
@@ -153,7 +156,6 @@
       </template>
   </a-modal>
   
-  
 </template>
 
 
@@ -170,7 +172,6 @@ import { PlusOutlined } from "@ant-design/icons-vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import {
-  insertArticulo,
   queryAllArticulo,
 } from "../util/dbSqlite";
 import { useI18n } from "vue-i18n";
@@ -376,7 +377,7 @@ export default {
         dto: data.dto,
         isRe: data.isRe,
         isIva: data.isIva,
-      });
+      })
       store.commit("saveFinal", {
         total: data.total,
         dto: data.dto,
@@ -384,8 +385,12 @@ export default {
         iva: data.iva,
         re: data.re,
         total_final: data.total_euros,
-      });
-    };
+      })
+    }
+
+    const goBack = () => {
+      router.back()
+    }
 
     onMounted(() => {
       console.log("[PageTable]funcion onMounted");
@@ -406,6 +411,7 @@ export default {
       checkIva,
       checkRe,
       calcula,
+      goBack,
       addProducto,
       saveProducto,
       deleteProducto,

@@ -5,6 +5,7 @@ const main = () => import("../components/PageMain.vue")
 const client = () => import("../components/PageClient.vue")
 const table = () => import("../components/PageTable.vue")
 const company = () => import("../components/PageCompany.vue")
+const history = () => import("../components/PageHistory.vue")
 
 const routes = [
     
@@ -36,6 +37,12 @@ const routes = [
         path : "/company",
         name : "company",
         component : company
+    },
+
+    {
+        path : "/history",
+        name : "history",
+        component : history
     },
 
 ]
