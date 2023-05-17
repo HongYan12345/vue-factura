@@ -2,7 +2,7 @@
 import Vuex from "vuex"
 import {ref} from "vue"
 import { DataItem, FormState, EuroFinal} from '../util/interface'
-
+import dayjs from 'dayjs'
 
 export const store = new Vuex.Store({
   state: {
@@ -14,6 +14,9 @@ export const store = new Vuex.Store({
     dto:0,
     isRe: false,
     isIva: false,
+    forma:ref('EFECTIVO'),
+    date: ref(dayjs().format('DD/MM/YYYY')),
+    num: "",
   },
 
   mutations: {
@@ -36,6 +39,13 @@ export const store = new Vuex.Store({
     saveEmpresa: (state, objStorage) =>{
       state.data_empresa= objStorage
     },
+
+    saveNum: (state, objStorage) =>{
+      state.num = objStorage.num
+      state.date = objStorage.date
+      state.forma = objStorage.forma
+    },
+
 
   },
 

@@ -12,9 +12,9 @@
         <template #renderItem="{ item }">
           <a-list-item>
             <div class="item-row">
-              <a class="item-details" @click="">
+              <a class="item-details" @click="goFactura">
                 <div>
-                  <div>{{parsedEmpresaName(item.value.empresa)}}</div>
+                  <div>{{parsedEmpresa(item.value.empresa)}}</div>
                  
                 </div>
                 
@@ -77,10 +77,9 @@ export default defineComponent({
       router.back();
     }
 
-    const parsedEmpresaName = (empresa:string)=>{
-      
+    const parsedEmpresa = (empresa:string)=>{
       const parsedEmpresa = JSON.parse(empresa);
-      return parsedEmpresa.name;
+      return "Nº: " + parsedEmpresa.factura_num + ", " + parsedEmpresa.name + ", " + parsedEmpresa.factura_date;
     }
 
     onMounted(() => {
@@ -93,7 +92,7 @@ export default defineComponent({
       t,
       factura_list,
       goBack,
-      parsedEmpresaName,
+      parsedEmpresa,
     }
   },
 });

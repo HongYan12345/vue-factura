@@ -51,7 +51,7 @@ export default defineComponent({
     const goCreate =() => {
       data.isCreate = true
       router.push({
-            name: "table",
+            name: "company",
       })
     }
 

@@ -3,15 +3,7 @@
     <div class="button-container">
       <a-button @click="goBack" class="btn-back" size="large">{{$t('back')}}</a-button>
     </div>
-    <a-space direction="vertical" :size="12">
-      <a-date-picker v-model:value="date" value-format="DD/MM/YYYY" :showToday="false"/>
-      <a-input-number addon-before="Nº" v-model:value="num" :min="1"></a-input-number>
-      <a-radio-group class="btn-select" v-model:value="forma" button-style="solid" @change="handleChange">
-        <a-radio-button value="EFECTIVO">EFECTIVO</a-radio-button>
-        <a-radio-button value="TRANSFERENCIA">TRANSFERENCIA</a-radio-button>
-        <a-radio-button value="TARJETA">TARJETA</a-radio-button>
-      </a-radio-group>
-    </a-space>
+    
     <div id="exportPdf" ref="exportpdf" style="
         border: 1px solid grey;
         padding: 10px;
@@ -259,10 +251,8 @@ export default {
       export_pdf();
     };
 
-    const today = () => {
-      return dayjs().format('YYYY-MM-DD HH:mm:ss');
-    };
 
+    
     const handleChange = () => {
       console.log(data.forma)
     }
@@ -276,6 +266,9 @@ export default {
     };
 
     onMounted(() => {
+      data.forma = store.state.forma
+      data.num = store.state.num
+      data.date = store.state.date
       data.dataSource = store.state.dataArray;
       data.data_cliente = store.state.data_cliente;
       data.data_empresa = store.state.data_empresa;
@@ -289,8 +282,7 @@ export default {
       goBack,
       exportPdf,
       savePdf,
-      today,
-      handleChange,
+      
     };
   },
 };

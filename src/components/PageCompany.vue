@@ -1,9 +1,18 @@
 <template>
   <div class="button-container">
       <a-button @click="goBack" class="btn-back" size="large">{{$t('back')}}</a-button>
-       <a-button @click="goPdf" class="btn-next" size="large">{{$t('next')}}</a-button>
+       <a-button @click="goTable" class="btn-next" size="large">{{$t('next')}}</a-button>
     </div>
   <div>
+    <a-space direction="vertical" :size="12">
+      <a-date-picker v-model:value="date" value-format="DD/MM/YYYY" :showToday="false"/>
+      <a-input-number addon-before="Nº" style="width:142px" v-model:value="num" :min="1" @input="validateNumberInput"></a-input-number>
+      <a-radio-group class="btn-select" v-model:value="forma" button-style="solid" @change="handleChange">
+        <a-radio-button value="EFECTIVO">EFECTIVO</a-radio-button>
+        <a-radio-button value="TRANSFERENCIA">TRANSFERENCIA</a-radio-button>
+        <a-radio-button value="TARJETA">TARJETA</a-radio-button>
+      </a-radio-group>
+    </a-space>
   <div>
     <a  @click="modificaDato">
       <div class="data_empresa">
@@ -32,7 +41,7 @@
     >
 
   </a-select>
-  <div v-if="client_name" class="data_empresa">
+  <div class="data_empresa">
         <div class="company_title">
           {{client_name}}
         </div>
@@ -56,17 +65,17 @@
       :confirm-loading="confirmLoading"
       @ok="handleOkDato"
     >
-    公司名称:
+    {{$t('name')}}:
     <a-input v-model:value="empresa_name"></a-input>
-    地址:
+    {{$t('direccion')}}:
     <a-input v-model:value="empresa_direccion"></a-input>
-    区分:
+    {{$t('poblation')}}:
     <a-input v-model:value="empresa_poblation"></a-input>
-    邮编:
+    {{$t('cp')}}:
     <a-input v-model:value="empresa_cp"></a-input>
-    税号:
+    {{$t('nif')}}:
     <a-input v-model:value="empresa_nif"></a-input>
-    电话:
+    {{$t('telefono')}}:
     <a-input v-model:value="empresa_telefono"></a-input>
     </a-modal>
     </a-col>
@@ -88,11 +97,15 @@ import { useStore } from 'vuex'
 import { insertEmpresa,
         queryEmpresa, queryAllTree, selectClient} from '../util/dbSqlite'
 import { useI18n} from "vue-i18n"
+import dayjs from 'dayjs'
 
 export default {
   components: {},
   setup() {
     const data = reactive({
+      forma:ref('EFECTIVO'),
+      date: ref(dayjs().format('DD/MM/YYYY')),
+      num: "",
       modifica_dato:false,
       empresa_name:"",
       empresa_direccion:"",
@@ -176,13 +189,11 @@ export default {
     }
 
     
-
-    //export pdf
-    const goPdf = () => {
+    const goTable = () => {
       console.log("cliente select: ",data.client_name)
       saveAll()
       router.push({
-            name: "pdf",
+            name: "table",
       })
     }
 
@@ -193,6 +204,17 @@ export default {
     }
 
     const pageUpdate = ()=>{
+      console.log("Update", store.state.data_cliente)
+      if(store.state.data_cliente){
+        data.client_name = store.state.data_cliente.name
+        data.client_direccion = store.state.data_cliente.direccion
+        data.client_telefono = store.state.data_cliente.telefono
+        data.client_cp = store.state.data_cliente.cp
+        data.client_poblation = store.state.data_cliente.poblation
+        data.client_nif = store.state.data_cliente.nif
+        data.client_forma = store.state.data_cliente.forma
+      }
+      
       showEmpresa()
       showClient()
       saveAll()
@@ -200,7 +222,7 @@ export default {
 
     const selectCliente = (value: any, option: any)=>{
       console.log(value)
-      selectClient(Number(value)).then((value) => {
+      selectClient(value).then((value) => {
         console.log("select dato client:",value)
         if(value[0]){
           data.client_name = value[0].name
@@ -236,8 +258,26 @@ export default {
           poblation: data.empresa_poblation,
           nif: data.empresa_nif
       })
+      store.commit("saveNum",{
+          num:data.num,
+          date:data.date,
+          forma:data.forma
+      })
       saveCliente()
     }
+
+    const today = () => {
+      return dayjs().format('YYYY-MM-DD HH:mm:ss');
+    };
+
+    const handleChange = () => {
+      console.log(data.forma)
+    }
+
+    const validateNumberInput = () => {
+      // 这一行将所有的非数字和非小数点/逗号的字符移除
+      data.num = data.num.replace(/[^0-9]/g, '');
+    };
 
     onMounted(() => {
       pageUpdate()
@@ -252,9 +292,12 @@ export default {
       selectCliente,
       modificaDato,
       handleOkDato,
-      goPdf,
+      goTable,
       goBack,
       confirmLoading,
+      today,
+      validateNumberInput,
+      handleChange,
     };
   },
 };

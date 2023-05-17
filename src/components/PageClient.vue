@@ -168,6 +168,13 @@ export default {
 
     const showDrawer = () => {
       visible.value = true
+      formState.name = "" 
+      formState.direccion = ""
+      formState.nif = ""
+      formState.forma = ""
+      formState.poblation = ""
+      formState.cp = ""
+      formState.telefono = ""
     }
 
     const onClose = () => {

@@ -30,6 +30,7 @@
       </a-button>
     </a-dropdown>
   </div>
+  <!-- <calculador /> -->
   <div>
     <router-view></router-view>
   </div>
@@ -41,10 +42,12 @@ import { useI18n } from "vue-i18n";
 import { DownOutlined } from "@ant-design/icons-vue";
 import type { MenuProps } from "ant-design-vue";
 import './css/AppStyle.css';
+import Calculador from './components/Calculador.vue'
 
 export default {
   components: {
     DownOutlined,
+    Calculador
   },
   setup() {
     const data = reactive({

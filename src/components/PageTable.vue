@@ -110,6 +110,7 @@
           v-model:value="cantidad"
           class="text-right"
           spellcheck="false"
+          @input="validateNumberInput"
         ></a-input>
       </a-col>
     </a-row>
@@ -120,6 +121,8 @@
           v-model:value="precio"
           class="text-right"
           spellcheck="false"
+          @blur="checkInput"
+          @input="validatePrecioInput"
         ></a-input>
       </a-col>
     </a-row>
@@ -356,6 +359,20 @@ export default {
       });
     };
 
+    const checkInput = () => {
+      data.precio = data.precio.replace(/,|，/g, '.');
+    }
+
+    const validatePrecioInput = () => {
+      // 这一行将所有的非数字和非小数点/逗号的字符移除
+      data.precio = data.precio.replace(/[^0-9.,，]/g, '');
+    }
+
+    const validateNumberInput = () => {
+      // 这一行将所有的非数字和非小数点/逗号的字符移除
+      data.precio = data.precio.replace(/[^0-9]/g, '');
+    };
+
     const pageUpdate = () => {
       console.log("[PageTable]funcion pageUpdate");
       showArticulo();
@@ -363,10 +380,10 @@ export default {
       saveAll();
     };
 
-    const goCompany = () => {
+    const goPdf = () => {
       pageUpdate();
       router.push({
-        name: "company",
+        name: "pdf",
       });
     };
 
@@ -417,8 +434,11 @@ export default {
       deleteProducto,
       editProducto,
       clearTable,
+      checkInput,
+      validatePrecioInput,
+      validateNumberInput,
       confirmLoading,
-      goCompany,
+      goPdf,
       articulo_list,
       
     };
