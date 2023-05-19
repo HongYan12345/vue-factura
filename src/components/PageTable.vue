@@ -334,7 +334,7 @@ export default {
           codigo: data.codigo,
           precio: data.precio,
           articulo: data.articulo,
-          euros: Number(data.cantidad) * Number(data.precio),
+          euros: Number((Number(data.cantidad) * Number(data.precio)).toFixed(2)),
         };
         dataSource.value.push(newData);
       }
@@ -384,24 +384,25 @@ export default {
       pageUpdate();
       router.push({
         name: "pdf",
+        params: {history:0}
       });
     };
 
     const saveAll = () => {
       store.commit("saveData", {
         dataArray: dataSource.value,
-        euroBase: data.total,
+        euroBase: data.total.toFixed(2),
         dto: data.dto,
         isRe: data.isRe,
         isIva: data.isIva,
       })
       store.commit("saveFinal", {
-        total: data.total,
+        total: data.total.toFixed(2),
         dto: data.dto,
-        base: data.total - data.dto,
-        iva: data.iva,
-        re: data.re,
-        total_final: data.total_euros,
+        base: (data.total - data.dto).toFixed(2),
+        iva: data.iva.toFixed(2),
+        re: data.re.toFixed(2),
+        total_final: data.total_euros.toFixed(2),
       })
     }
 

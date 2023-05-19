@@ -131,7 +131,7 @@
 
 <script lang="ts">
 import { ref, reactive, toRefs, onMounted} from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { export_pdf } from "../util/exportPdf";
 import { useStore } from "vuex";
 import {
@@ -148,6 +148,7 @@ export default {
       forma:ref('EFECTIVO'),
       date: ref(dayjs().format('DD/MM/YYYY')),
       num: "",
+      isHistory:0,
 
       data_empresa: ref<FormState>({
         name: "",
@@ -240,15 +241,17 @@ export default {
       ],
       
     });
-    const refData = toRefs(data);
-    const router = useRouter();
-    const store = useStore();
+    const refData = toRefs(data)
+    const router = useRouter()
+    const route = useRoute()
+    const store = useStore()
     const goBack = () => {
       router.back();
     };
 
     const exportPdf = () => {
-      export_pdf();
+      savePdf()
+      export_pdf()
     };
 
 
@@ -263,6 +266,7 @@ export default {
       const dataEmpresaJson = JSON.stringify(data.data_empresa);
       const dataClienteJson = JSON.stringify(data.data_cliente);
       insertFactura(dataClienteJson, dataEmpresaJson, dataItemJson, data.num, data.date, data.forma, dataFinalJson)
+      message.success('保存成功')
     };
 
     onMounted(() => {
@@ -273,6 +277,7 @@ export default {
       data.data_cliente = store.state.data_cliente;
       data.data_empresa = store.state.data_empresa;
       data.dataSource_final[0] = store.state.dataFinal;
+      data.isHistory = Number(route.params.history)
       console.log(store.state.dataFinal);
       console.log("data_cliente:", data.data_cliente);
     });

@@ -10,7 +10,7 @@ const history = () => import("../components/PageHistory.vue")
 const routes = [
     
     {
-        path : "/pdf",
+        path : "/pdf:history'",
         name : "pdf",
         component : pdf
     },

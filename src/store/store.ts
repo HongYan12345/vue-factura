@@ -46,6 +46,20 @@ export const store = new Vuex.Store({
       state.forma = objStorage.forma
     },
 
+    RESET_STATE(state) {
+      state.dataArray = new Array<DataItem>()
+      state.dataFinal = ref<EuroFinal>()
+      state.data_empresa = ref<FormState>()
+      state.data_cliente = ref<FormState>()
+      state.euroBase = 0
+      state.dto = 0
+      state.isRe = false
+      state.isIva = false
+      state.forma = ref('EFECTIVO')
+      state.date = ref(dayjs().format('DD/MM/YYYY'))
+      state.num = ""
+    }
+
 
   },
 

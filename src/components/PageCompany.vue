@@ -6,7 +6,7 @@
   <div>
     <a-space direction="vertical" :size="12">
       <a-date-picker v-model:value="date" value-format="DD/MM/YYYY" :showToday="false"/>
-      <a-input-number addon-before="Nº" style="width:142px" v-model:value="num" :min="1" @input="validateNumberInput"></a-input-number>
+      <a-input-number addon-before="Nº" style="width:142px" v-model:value="num" :min="1" ></a-input-number>
       <a-radio-group class="btn-select" v-model:value="forma" button-style="solid" @change="handleChange">
         <a-radio-button value="EFECTIVO">EFECTIVO</a-radio-button>
         <a-radio-button value="TRANSFERENCIA">TRANSFERENCIA</a-radio-button>
@@ -213,8 +213,9 @@ export default {
         data.client_poblation = store.state.data_cliente.poblation
         data.client_nif = store.state.data_cliente.nif
         data.client_forma = store.state.data_cliente.forma
+        
       }
-      
+      data.num = store.state.num
       showEmpresa()
       showClient()
       saveAll()
@@ -236,18 +237,6 @@ export default {
       })
     }
 
-    const saveCliente = ()=>{
-
-        store.commit("saveCliente",{
-          name:data.client_name,
-          direccion: data.client_direccion,
-          telefono: data.client_telefono,
-          cp: data.client_cp,
-          poblation: data.client_poblation,
-          nif: data.client_nif,
-          forma: data.client_forma
-          })
-    }
     
     const saveAll = () =>{
       store.commit("saveEmpresa",{
@@ -263,7 +252,15 @@ export default {
           date:data.date,
           forma:data.forma
       })
-      saveCliente()
+      store.commit("saveCliente",{
+          name:data.client_name,
+          direccion: data.client_direccion,
+          telefono: data.client_telefono,
+          cp: data.client_cp,
+          poblation: data.client_poblation,
+          nif: data.client_nif,
+          forma: data.client_forma
+      })
     }
 
     const today = () => {

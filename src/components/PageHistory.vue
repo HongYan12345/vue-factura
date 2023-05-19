@@ -12,9 +12,9 @@
         <template #renderItem="{ item }">
           <a-list-item>
             <div class="item-row">
-              <a class="item-details" @click="goFactura">
+              <a class="item-details" @click="goFactura(item.value)">
                 <div>
-                  <div>{{parsedEmpresa(item.value.empresa)}}</div>
+                  <div>{{parsedItem(item.value)}}</div>
                  
                 </div>
                 
@@ -74,12 +74,52 @@ export default defineComponent({
     }
 
     const goBack = () => {
+      clearAll()
       router.back();
     }
 
-    const parsedEmpresa = (empresa:string)=>{
-      const parsedEmpresa = JSON.parse(empresa);
-      return "Nº: " + parsedEmpresa.factura_num + ", " + parsedEmpresa.name + ", " + parsedEmpresa.factura_date;
+    const clearAll = () => {
+      store.commit("RESET_STATE")
+    }
+
+    const saveAll = (item:any) => {
+      const parsedEmpresa = JSON.parse(item.empresa);
+      const parsedEuro = JSON.parse(item.euro_final);
+      const parsedList = JSON.parse(item.item_list);
+      const parsedCliente = JSON.parse(item.user)
+      console.log(parsedEuro)
+
+      store.commit("saveCliente",parsedCliente)
+      
+      store.commit("saveData", {
+        dataArray: parsedList,
+        euroBase: parsedEuro.total,
+        dto: parsedEuro.dto,
+        isRe: parsedEuro.re!=0,
+        isIva: parsedEuro.iva!=0,
+      })
+      store.commit("saveFinal", parsedEuro)
+
+      store.commit("saveEmpresa", parsedEmpresa)
+      store.commit("saveNum",{
+          num:item.factura_num,
+          date:item.factura_date,
+          forma:item.forma
+       })
+    }
+
+    const goFactura = (item:any) => {
+      saveAll(item)
+      router.push({
+       name: "pdf",
+       params: { history: 1 },
+      });
+    };
+
+    const parsedItem = (item:any)=>{
+      const parsedEmpresa = JSON.parse(item.empresa);
+      console.log(parsedEmpresa)
+      return "Nº: " + item.factura_num + ", " + parsedEmpresa.name + ", " + item.factura_date;
     }
 
     onMounted(() => {
@@ -92,7 +132,8 @@ export default defineComponent({
       t,
       factura_list,
       goBack,
-      parsedEmpresa,
+      parsedItem,
+      goFactura,
     }
   },
 });
