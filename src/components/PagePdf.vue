@@ -5,40 +5,43 @@
     </div>
     
     <div id="exportPdf" ref="exportpdf" style="
-        border: 1px solid grey;
         padding: 10px;
+        font-size: 8px;
+        padding-top:20px;
+        width: 375px;
+        margin: 0 auto;
         background-color: white;">
-      <div style="text-align: right">Nº: {{num}}</div>
-      <div style="text-align: right">{{date}}</div>
-      <div style="text-align: right">{{forma}}</div>
+      <div style="text-align: right; padding-right:15px;">Nº: {{num}}</div>
+      <div style="text-align: right; padding-right:15px;">{{date}}</div>
+      <div style="text-align: right; padding-right:15px;">{{forma}}</div>
       <br/>
-      <div style="display: flex">
+      <div style="display: flex; padding-left:20px">
         <div style="flex: 1">{{ data_empresa.name }}</div>
-        <div style="flex: 1; text-align: right">{{ data_cliente.name }}</div>
+        <div style="flex: 1; text-align: right; padding-right:20px;">{{ data_cliente.name }}</div>
       </div>
-      <div style="display: flex">
+      <div style="display: flex; padding-left:20px">
         <div style="flex: 1">{{ data_empresa.direccion }}</div>
-        <div style="flex: 1; text-align: right">
+        <div style="flex: 1; text-align: right; padding-right:20px;">
           {{ data_cliente.direccion }}
         </div>
       </div>
-      <div style="display: flex">
+      <div style="display: flex; padding-left:20px">
         <div style="flex: 1">{{ data_empresa.poblation }}</div>
-        <div style="flex: 1; text-align: right">
+        <div style="flex: 1; text-align: right; padding-right:20px;">
           {{ data_cliente.poblation }}
         </div>
       </div>
-      <div style="display: flex">
+      <div style="display: flex; padding-left:20px">
         <div style="flex: 1">CP:{{ data_empresa.cp }}</div>
-        <div style="flex: 1; text-align: right">CP:{{ data_cliente.cp }}</div>
+        <div style="flex: 1; text-align: right; padding-right:20px;">CP:{{ data_cliente.cp }}</div>
       </div>
-      <div style="display: flex">
+      <div style="display: flex; padding-left:20px">
         <div style="flex: 1">NIF:{{ data_empresa.nif }}</div>
-        <div style="flex: 1; text-align: right">NIF:{{ data_cliente.nif }}</div>
+        <div style="flex: 1; text-align: right; padding-right:20px;">NIF:{{ data_cliente.nif }}</div>
       </div>
-      <div style="display: flex">
+      <div style="display: flex; padding-left:20px">
         <div style="flex: 1">TEL:{{ data_empresa.telefono }}</div>
-        <div style="flex: 1; text-align: right">
+        <div style="flex: 1; text-align: right; padding-right:20px;">
           TEL:{{ data_cliente.telefono }}
         </div>
       </div>
@@ -46,69 +49,74 @@
      <table style="width: 90%; border-collapse: collapse; margin-top: 20px; margin-left: auto; margin-right: auto;">
   <thead>
     <tr>
-      <th style="border: 1px solid #000; padding: 3px; background-color: white;">cantidad</th>
-      <th style="border: 1px solid #000; padding: 3px; background-color: white;">precio</th>
-      <th style="border: 1px solid #000; padding: 3px; background-color: white;">codigo</th>
-      <th style="border: 1px solid #000; padding: 3px; background-color: white;">articulo</th>
-      <th style="border: 1px solid #000; padding: 3px; background-color: white;">euros</th>
+      <th style="border-top: 0.5px solid #000;
+    border-left: 0.5px solid #000; border-bottom: 0.5px solid #000; padding: 3px;">CANTIDAD</th>
+      <th style="border-top: 0.5px solid #000;
+    border-left: 0.5px solid #000; border-bottom: 0.5px solid #000; padding: 3px;">CODIGO</th>
+      <th style="border-top: 0.5px solid #000;
+    border-left: 0.5px solid #000; border-bottom: 0.5px solid #000; padding: 3px;">ARTICULO</th>
+      <th style="border-top: 0.5px solid #000;
+    border-left: 0.5px solid #000; border-bottom: 0.5px solid #000; padding: 3px;">PRECIO</th>
+      <th style="border-top: 0.5px solid #000;
+    border-left: 0.5px solid #000; border-bottom: 0.5px solid #000; border-right: 0.5px solid #000; padding: 3px;">EUROS</th>
     </tr>
   </thead>
   <tbody>
-    <tr v-for="item in dataSource" :key="item.key">
-      <td style="border: 1px solid #000; padding: 2px; background-color: white;">
+    <tr v-for="item in dataSource" :key="item.key" style="border-left:0.5px solid #000; border-right:0.5px solid #000;">
+      <td style="border-bottom: 0.5px solid #000; padding: 2px;">
         {{ item.cantidad }}
       </td>
-      <td style="border: 1px solid #000; padding: 2px; background-color: white;">
-        {{ item.precio }}
-      </td>
-      <td style="border: 1px solid #000; padding: 2px; background-color: white;">
+      <td style="border-bottom: 0.5px solid #000; border-left:0.5px solid #000; padding: 2px;">
         {{ item.codigo }}
       </td>
-      <td style="border: 1px solid #000; padding: 2px; background-color: white;">
+      <td style="border-bottom: 0.5px solid #000; border-left:0.5px solid #000; padding: 2px;">
         {{ item.articulo }}
       </td>
-      <td style="border: 1px solid #000; padding: 2px; background-color: white;">
-        {{ item.euros }}
+      <td style="border-bottom: 0.5px solid #000; border-left:0.5px solid #000; padding: 2px;">
+        {{ item.precio }}
+      </td>
+      <td style="border-bottom: 0.5px solid #000; border-left: 0.5px solid #000; padding: 2px;">
+        {{ item.euros.toFixed(2) }}
       </td>
     </tr>
-    <tr v-for="n in (10 - dataSource.length)" v-if="dataSource.length < 10" style="border-left:1px solid #000; border-right:1px solid #000;">
-      <td style="background-color: white;">&nbsp;</td>
-      <td style="background-color: white;">&nbsp;</td>
-      <td style="background-color: white;">&nbsp;</td>
-      <td style="background-color: white;">&nbsp;</td>
-      <td style="background-color: white;">&nbsp;</td>
+    <tr v-for="n in (20 - dataSource.length)" v-if="dataSource.length < 20" style="border-left:0.5px solid #000; border-right:0.5px solid #000;">
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
     </tr>
-    <tr v-for="item in dataSource_final" :key="item.total">
+    <tr v-for="item in dataSource_final" :key="item.total" style="border: 0.8px solid #000;">
       <td colspan="5">
-        <table style="width: 100%; border-collapse: collapse; margin-top: 0; border: none;">
+        <table style="width: 100%; border-collapse: collapse; margin-top: 0;">
           <thead>
             <tr>
-              <th style="border: 1px solid #000; padding: 3px; background-color: white;">TOTAL BRUTO</th>
-              <th style="border: 1px solid #000; padding: 3px; background-color: white;">%DTO</th>
-              <th style="border: 1px solid #000; padding: 3px; background-color: white;">BASE</th>
-              <th style="border: 1px solid #000; padding: 3px; background-color: white;">21%IVA</th>
-              <th style="border: 1px solid #000; padding: 3px; background-color: white;">%R.E</th>
-              <th style="border: 1px solid #000; padding: 3px; background-color: white;">TOTAL EUROS</th>
+              <th style="border-right: 0.5px solid #000; padding: 3px;">TOTAL BRUTO</th>
+              <th style="border-right: 0.5px solid #000; padding: 3px;">%DTO</th>
+              <th style="border-right: 0.5px solid #000; padding: 3px;">BASE</th>
+              <th style="border-right: 0.5px solid #000; padding: 3px;">21%IVA</th>
+              <th style="border-right: 0.5px solid #000; padding: 3px;">%R.E</th>
+              <th style=" solid #000; padding: 3px;">TOTAL EUROS</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td style="border: 1px solid #000; padding: 5px; background-color: white;">
+              <td style="border-top: 0.5px solid #000;border-right: 0.5px solid #000; padding: 5px;">
                 {{ item.total }}
               </td>
-              <td style="border: 1px solid #000; padding: 5px; background-color: white;">
+              <td style="border-top: 0.5px solid #000;border-right: 0.5px solid #000; padding: 5px;">
                 {{ item.dto }}
               </td>
-              <td style="border: 1px solid #000; padding: 5px; background-color: white;">
+              <td style="border-top: 0.5px solid #000;border-right: 0.5px solid #000; padding: 5px;">
                 {{ item.base }}
               </td>
-              <td style="border: 1px solid #000; padding: 5px; background-color: white;">
+              <td style="border-top: 0.5px solid #000;border-right: 0.5px solid #000; padding: 5px;">
                 {{ item.iva }}
               </td>
-              <td style="border: 1px solid #000; padding: 5px; background-color: white;">
+              <td style="border-top: 0.5px solid #000;border-right: 0.5px solid #000; padding: 5px;">
                 {{ item.re }}
               </td>
-              <td style="border: 1px solid #000; padding: 5px; background-color: white;">
+              <td style="border-top: 0.5px solid #000; padding: 5px;">
                 {{ item.total_final }}
               </td>
             </tr>
@@ -119,7 +127,7 @@
   </tbody>
 </table>
     </div>
-    <div>
+    <div v-if="isHistory != 1">
       <a-button @click="savePdf">{{$t('save')}}</a-button>
     </div>
     <div>
@@ -250,11 +258,12 @@ export default {
     };
 
     const exportPdf = () => {
-      savePdf()
-      export_pdf()
+      if(data.isHistory == 0){
+        savePdf()
+      }
+      let htmlElement = document.querySelector('#exportPdf');
+      export_pdf(htmlElement, data.num)
     };
-
-
     
     const handleChange = () => {
       console.log(data.forma)
@@ -287,7 +296,6 @@ export default {
       goBack,
       exportPdf,
       savePdf,
-      
     };
   },
 };

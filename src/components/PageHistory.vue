@@ -19,7 +19,9 @@
                 </div>
                 
               </a>
-              
+              <a-button @click="newFactura(item.value)">
+                  <CopyOutlined />
+                </a-button>
             </div>
           </a-list-item>
         </template>
@@ -35,10 +37,12 @@ import { queryFactura } from '../util/dbSqlite'
 import { useRouter} from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n} from "vue-i18n"
+import { CopyOutlined} from '@ant-design/icons-vue'
 
 
 export default defineComponent({
   components: {
+    CopyOutlined,
   },
   setup() {
     const data = reactive({
@@ -116,6 +120,13 @@ export default defineComponent({
       });
     };
 
+    const newFactura = (item:any) => {
+      saveAll(item)
+      router.push({
+       name: "company",
+      });
+    };
+
     const parsedItem = (item:any)=>{
       const parsedEmpresa = JSON.parse(item.empresa);
       console.log(parsedEmpresa)
@@ -134,6 +145,7 @@ export default defineComponent({
       goBack,
       parsedItem,
       goFactura,
+      newFactura,
     }
   },
 });

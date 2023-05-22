@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="button-main">
   <a-button @click="goCreate" class="btn-crear">
   <PlusOutlined style="font-size: 50px;" />
 </a-button>
@@ -19,7 +19,7 @@ import { useRouter} from 'vue-router'
 import { useStore } from 'vuex'
 import { initAllTable ,queryFactura } from '../util/dbSqlite'
 import { useI18n} from "vue-i18n"
-
+import '../css/MainStyle.css';
 
 export default defineComponent({
   components: {

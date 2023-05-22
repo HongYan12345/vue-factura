@@ -8,8 +8,8 @@
       <a-date-picker v-model:value="date" value-format="DD/MM/YYYY" :showToday="false"/>
       <a-input-number addon-before="Nº" style="width:142px" v-model:value="num" :min="1" ></a-input-number>
       <a-radio-group class="btn-select" v-model:value="forma" button-style="solid" @change="handleChange">
-        <a-radio-button value="EFECTIVO">EFECTIVO</a-radio-button>
         <a-radio-button value="TRANSFERENCIA">TRANSFERENCIA</a-radio-button>
+        <a-radio-button value="EFECTIVO">EFECTIVO</a-radio-button>
         <a-radio-button value="TARJETA">TARJETA</a-radio-button>
       </a-radio-group>
     </a-space>
@@ -103,7 +103,7 @@ export default {
   components: {},
   setup() {
     const data = reactive({
-      forma:ref('EFECTIVO'),
+      forma:ref('TRANSFERENCIA'),
       date: ref(dayjs().format('DD/MM/YYYY')),
       num: "",
       modifica_dato:false,

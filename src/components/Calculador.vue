@@ -1,6 +1,6 @@
 <template>
-  <div style="width: 80%; border: 5px solid #ccc;">
-    <div style="width: 100%; height:40px; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">{{ display }}</div>
+  <div style="width: 90%; border: 5px solid #ccc;">
+    <div style="width: 100%; height:45px; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">{{ display }}</div>
     <a-row gutter="10">
       <a-col span="6">
         <a-button style="width: 100%;" @click="clearDisplay">C</a-button>

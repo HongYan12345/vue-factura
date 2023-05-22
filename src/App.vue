@@ -15,7 +15,7 @@
       </a-menu-item>
       
     </a-menu>
-
+    <a-button class="btn-calculador" @click="showDrawer"><CalculatorOutlined style="font-size: 25px;" /></a-button>
     <a-dropdown class="btn-lenguage" :trigger="['click']">
       <template #overlay>
         <a-menu @click="handleMenuClick">
@@ -30,7 +30,18 @@
       </a-button>
     </a-dropdown>
   </div>
-  <!-- <calculador /> -->
+   
+  <a-drawer
+    title="Calculador"
+    placement="top"
+    width=50
+    height=350
+    :closable="false"
+    v-model:visible="visible"
+  >
+  <calculador />
+  </a-drawer>
+  
   <div>
     <router-view></router-view>
   </div>
@@ -39,7 +50,7 @@
 import { reactive, toRefs, onMounted, onUpdated, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { DownOutlined } from "@ant-design/icons-vue";
+import { DownOutlined ,CalculatorOutlined} from "@ant-design/icons-vue";
 import type { MenuProps } from "ant-design-vue";
 import './css/AppStyle.css';
 import Calculador from './components/Calculador.vue'
@@ -47,13 +58,24 @@ import Calculador from './components/Calculador.vue'
 export default {
   components: {
     DownOutlined,
-    Calculador
+    Calculador,
+    CalculatorOutlined,
   },
   setup() {
     const data = reactive({
       isCreate: false,
       selectedLanguage:'',
+      visible: ref<boolean>(false),
     });
+
+
+    const afterVisibleChange = (bool: boolean) => {
+      console.log('visible', bool);
+    };
+
+    const showDrawer = () => {
+      data.visible = true;
+    };
 
     const current = ref(["1"]);
     const refData = toRefs(data);
@@ -148,7 +170,7 @@ export default {
       handleMenu,
       t,
       locale,
-
+      showDrawer,
       //changeStep,
     };
   },

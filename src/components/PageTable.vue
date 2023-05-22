@@ -12,6 +12,9 @@
       <template #header>
         <div style="margin-left: 0;"> <span>{{$t('total_euro')}}</span></div>
         <div class="space"></div>
+        <div><div v-if="isIva">con iva</div>
+        <div v-if="isRe">con re</div></div>
+        <div class="space"></div>
         <div class="large-font"><span >{{ total_euros.toFixed(2) }}€</span></div>
           
       </template>
@@ -332,7 +335,7 @@ export default {
           key: `${count.value}`,
           cantidad: data.cantidad,
           codigo: data.codigo,
-          precio: data.precio,
+          precio: Number(data.precio).toFixed(2),
           articulo: data.articulo,
           euros: Number((Number(data.cantidad) * Number(data.precio)).toFixed(2)),
         };
@@ -407,6 +410,7 @@ export default {
     }
 
     const goBack = () => {
+      saveAll()
       router.back()
     }
 
