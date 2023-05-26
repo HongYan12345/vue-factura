@@ -6,11 +6,12 @@ const client = () => import("../components/PageClient.vue")
 const table = () => import("../components/PageTable.vue")
 const company = () => import("../components/PageCompany.vue")
 const history = () => import("../components/PageHistory.vue")
+const login = () => import("../components/PageLogin.vue")
 
 const routes = [
     
     {
-        path : "/pdf:history'",
+        path : "/pdf:history",
         name : "pdf",
         component : pdf
     },
@@ -43,6 +44,12 @@ const routes = [
         path : "/history",
         name : "history",
         component : history
+    },
+
+    {
+        path : "/login",
+        name : "login",
+        component : login
     },
 
 ]

@@ -85,7 +85,7 @@
     :confirm-loading="confirmLoading"
     @ok="handleOkArticulo"
   >
-    <a-input v-model:value="articulo_name">{{ $t("name_producto") }}:</a-input>
+    <a-input v-model:value="articulo_name" spellcheck="false">{{ $t("name_producto") }}:</a-input>
   </a-modal>
 
     

@@ -66,17 +66,17 @@
       @ok="handleOkDato"
     >
     {{$t('name')}}:
-    <a-input v-model:value="empresa_name"></a-input>
+    <a-input v-model:value="empresa_name" spellcheck="false"></a-input>
     {{$t('direccion')}}:
-    <a-input v-model:value="empresa_direccion"></a-input>
+    <a-input v-model:value="empresa_direccion" spellcheck="false"></a-input>
     {{$t('poblation')}}:
-    <a-input v-model:value="empresa_poblation"></a-input>
+    <a-input v-model:value="empresa_poblation" spellcheck="false"></a-input>
     {{$t('cp')}}:
-    <a-input v-model:value="empresa_cp"></a-input>
+    <a-input v-model:value="empresa_cp" spellcheck="false"></a-input>
     {{$t('nif')}}:
-    <a-input v-model:value="empresa_nif"></a-input>
+    <a-input v-model:value="empresa_nif" spellcheck="false"></a-input>
     {{$t('telefono')}}:
-    <a-input v-model:value="empresa_telefono"></a-input>
+    <a-input v-model:value="empresa_telefono" spellcheck="false"></a-input>
     </a-modal>
     </a-col>
     <a-col :xs="24" :sm="12" :md="8" :lg="6">
@@ -216,6 +216,7 @@ export default {
         
       }
       data.num = store.state.num
+      data.date = store.state.date
       showEmpresa()
       showClient()
       saveAll()

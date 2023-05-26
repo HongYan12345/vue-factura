@@ -1,5 +1,5 @@
 <template>
-  <div class="menu-container">
+  <div class="menu-container" v-if="store.state.isLogin">
     <a-menu
       style="background-color: #47b28c; padding: 10px 0 0"
       v-model:selectedKeys="current"
@@ -52,6 +52,7 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { DownOutlined ,CalculatorOutlined} from "@ant-design/icons-vue";
 import type { MenuProps } from "ant-design-vue";
+import { useStore } from 'vuex'
 import './css/AppStyle.css';
 import Calculador from './components/Calculador.vue'
 
@@ -67,6 +68,9 @@ export default {
       selectedLanguage:'',
       visible: ref<boolean>(false),
     });
+
+    //store
+    const store = useStore()
 
 
     const afterVisibleChange = (bool: boolean) => {
@@ -150,10 +154,17 @@ export default {
 
     onMounted(() => {
       console.log("onMounted");
-
-      router.push({
-        name: "main",
-      });
+      if(store.state.isLogin){
+        router.push({
+          name: "main",
+        });
+      }
+      else{
+        router.push({
+          name: "login",
+        });
+      }
+      
     });
 
     /*
@@ -171,6 +182,7 @@ export default {
       t,
       locale,
       showDrawer,
+      store,
       //changeStep,
     };
   },

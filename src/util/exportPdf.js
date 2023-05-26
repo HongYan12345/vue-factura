@@ -12,7 +12,7 @@ export async function export_pdf(html,num){
       const container = html
       
       html2Canvas(container, {
-        scale:2,
+        scale: 3,
         useCORS: true 
       }).then(function (canvas) {
         // 获取canvas画布的宽高
@@ -27,7 +27,7 @@ export async function export_pdf(html,num){
         // html页面生成的canvas在pdf中图片的宽高
         let imgWidth = 595.28;
         let imgHeight = imgWidth / contentWidth * contentHeight;
-        let pageData = canvas.toDataURL('image/jpeg', 1.0);
+        let pageData = canvas.toDataURL('image/jpeg', 0.98);
         let PDF = new JsPDF('p', 'pt', 'a4');
         // 两个宽度需要区分: 一个是html页面的实际宽度，和生成pdf的页面宽度
         // 当内容未超过pdf一页显示的范围，无需分页

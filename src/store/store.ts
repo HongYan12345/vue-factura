@@ -14,9 +14,10 @@ export const store = new Vuex.Store({
     dto:0,
     isRe: false,
     isIva: false,
-    forma:ref('EFECTIVO'),
+    forma:ref('TRANSFERENCIA'),
     date: ref(dayjs().format('DD/MM/YYYY')),
     num: "",
+    isLogin: true,
   },
 
   mutations: {
@@ -58,7 +59,11 @@ export const store = new Vuex.Store({
       state.forma = ref('EFECTIVO')
       state.date = ref(dayjs().format('DD/MM/YYYY'))
       state.num = ""
-    }
+    },
+
+    login: (state) =>{
+      state.isLogin = true
+    },
 
 
   },

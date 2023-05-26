@@ -319,11 +319,11 @@ export default {
       if (data.isEdit != "") {
         for (const item of dataSource.value) {
           if (item.key === data.isEdit) {
-            item.cantidad = data.cantidad;
-            item.precio = data.precio;
-            item.codigo = data.codigo;
-            item.articulo = data.articulo;
-            item.euros = Number(data.cantidad) * Number(data.precio);
+            item.cantidad = data.cantidad
+            item.precio = Number(data.precio).toFixed(2)
+            item.codigo = data.codigo
+            item.articulo = data.articulo
+            item.euros = Number(data.cantidad) * Number(data.precio)
             break;
           }
         }
