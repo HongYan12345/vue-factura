@@ -1,10 +1,18 @@
+const { app } = require('@electron/remote');
+const path = require('path');
 const sqlite3 = require('sqlite3').verbose()
 let db
+let userDataDir = app.getPath('userData');
+// 将路径和文件名连接起来，形成一个绝对路径
+let dbPath = path.join(userDataDir, 'base.db');
+
 
 // 连接数据库
 function conn() {
+  console.log(dbPath)
   if (!db || !db.open) {
-    db = new sqlite3.Database('base.db')
+    db = new sqlite3.Database(dbPath)
+    //db = new sqlite3.Database('base.db')
   }
   return db
 }
@@ -232,7 +240,7 @@ export const deleteFactura = (id) => {
   return new Promise((resolve, reject) => {
     let db = conn()
     db.serialize(() => {
-      db.run("DELETE FROM user WHERE id=?", id, function (err) {
+      db.run("DELETE FROM factura WHERE id=?", id, function (err) {
         if (err) {
           console.log(err)
         }
@@ -248,7 +256,7 @@ export const deleteFactura = (id) => {
 }
 
 export const queryFactura = () => {
-  console.log("show empresa")
+  console.log("[Bdsqlite] show factura")
   return new Promise((resolve, reject) => {
     let db = conn()
     db.all('select * from factura', (err, rows) => {

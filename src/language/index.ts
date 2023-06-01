@@ -33,7 +33,9 @@ const messages={
     check_delect: "¿Está seguro de que desea eliminar?",
     total: "Precio total",
     total_euro: "Precio final",
-    export: "Exportar"
+    export: "Exportar",
+    registro: "Registro", 
+    logout:"Salir",
   },
   en: {
     lenguage: "Lenguage",
@@ -67,8 +69,9 @@ const messages={
     check_delect: "Are you sure you want to delete?",
     total: "Total price",
     total_euro: "Final price",
-    export: "Export"
-    
+    export: "Export",
+    registro: "Register", 
+    logout:"Exit",
   },
   zh: {
     lenguage: "语言",
@@ -102,7 +105,9 @@ const messages={
     check_delect: "确定要删除吗？",
     total: "总价格",
     total_euro: "最终价格",
-    export: "导出表格"
+    export: "导出表格",
+    registro: "注册", 
+    logout:"退出",
     
   },
 };

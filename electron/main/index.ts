@@ -1,6 +1,7 @@
 import { app, BrowserWindow, shell, ipcMain, session } from 'electron'
 import { release } from 'node:os'
 import { join } from 'node:path'
+import { initialize, enable } from '@electron/remote/main';
 
 
 // The built directory structure
@@ -42,6 +43,7 @@ const url = process.env.VITE_DEV_SERVER_URL
 const indexHtml = join(process.env.DIST, 'index.html')
 
 async function createWindow() {
+  initialize();
   win = new BrowserWindow({
     title: 'Main window',
     icon: join(process.env.PUBLIC, 'favicon.ico'),
@@ -52,8 +54,11 @@ async function createWindow() {
       // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
       nodeIntegration: true,
       contextIsolation: false,
+      webSecurity: false
     },
+    
   })
+  enable(win.webContents);
 
   if (process.env.VITE_DEV_SERVER_URL) { // electron-vite-vue#298
     win.loadURL(url)

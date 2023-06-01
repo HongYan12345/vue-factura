@@ -13,6 +13,12 @@ export default defineConfig(({ command }) => {
   const isServe = command === 'serve'
   const isBuild = command === 'build'
   const sourcemap = isServe || !!process.env.VSCODE_DEBUG
+  const serverConfig = process.env.VSCODE_DEBUG 
+    ? {
+        host: new URL(pkg.debug.env.VITE_DEV_SERVER_URL).hostname,
+        port: +new URL(pkg.debug.env.VITE_DEV_SERVER_URL).port,
+      }
+    : {};
 
   return {
     plugins: [
@@ -63,13 +69,14 @@ export default defineConfig(({ command }) => {
         nodeIntegration: true,
       }),
     ],
-    server: process.env.VSCODE_DEBUG && (() => {
-      const url = new URL(pkg.debug.env.VITE_DEV_SERVER_URL)
-      return {
-        host: url.hostname,
-        port: +url.port,
-      }
-    })(),
+    
+    server: {
+      ...serverConfig,
+      proxy: {
+          '/identitytoolkit': 'https://www.googleapis.com',
+          '/v1': 'https://identitytoolkit.googleapis.com',
+        }
+    },
     clearScreen: false,
     
   }

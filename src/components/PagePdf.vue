@@ -82,24 +82,24 @@
         {{ item.euros.toFixed(2) }}
       </td>
     </tr>
-    <tr v-for="n in (32 - dataSource.length)" v-if="dataSource.length < 32" style="border-left:0.2px solid #000; border-right:0.2px solid #000;">
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
+    <tr v-for="n in (24 - dataSource.length)" v-if="dataSource.length < 24" style="border-left:0.2px solid #000; border-right:0.2px solid #000;">
+      <td style="border-bottom: 0.3px solid #fff;  padding: 2px;">&nbsp;</td>
+      <td style="border-bottom: 0.3px solid #fff;  padding: 2px;">&nbsp;</td>
+      <td style="border-bottom: 0.3px solid #fff;  padding: 2px;">&nbsp;</td>
+      <td style="border-bottom: 0.3px solid #fff;  padding: 2px;">&nbsp;</td>
+      <td style="border-bottom: 0.3px solid #fff;  padding: 2px;">&nbsp;</td>
     </tr>
     <tr v-for="item in dataSource_final" :key="item.total" style="border: 0.2px solid #000;">
       <td colspan="5">
         <table style="width: 100%; border-collapse: collapse; margin-top: 0;">
           <thead>
             <tr>
-              <th style="border-right: 0.3px solid #000; padding: 3px;font-size: 9px;">TOTAL BRUTO</th>
-              <th style="border-right: 0.3px solid #000; padding: 3px;font-size: 9px;">%DTO</th>
-              <th style="border-right: 0.3px solid #000; padding: 3px;font-size: 9px;">BASE</th>
-              <th style="border-right: 0.3px solid #000; padding: 3px;font-size: 9px;">21%IVA</th>
-              <th style="border-right: 0.3px solid #000; padding: 3px;font-size: 9px;">%R.E</th>
-              <th style=" solid #000; padding: 3px;font-size: 9px;">TOTAL EUROS</th>
+              <th style="border-right: 0.3px solid #000; border-top: 0.3px solid #000; padding: 3px;font-size: 9px;">TOTAL BRUTO</th>
+              <th style="border-right: 0.3px solid #000; border-top: 0.3px solid #000; padding: 3px;font-size: 9px;">%DTO</th>
+              <th style="border-right: 0.3px solid #000; border-top: 0.3px solid #000; padding: 3px;font-size: 9px;">BASE</th>
+              <th style="border-right: 0.3px solid #000; border-top: 0.3px solid #000; padding: 3px;font-size: 9px;">21%IVA</th>
+              <th style="border-right: 0.3px solid #000; border-top: 0.3px solid #000; padding: 3px;font-size: 9px;">%R.E</th>
+              <th style=" solid #000; padding: 3px; border-top: 0.3px solid #000; font-size: 9px;">TOTAL EUROS</th>
             </tr>
           </thead>
           <tbody>

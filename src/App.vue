@@ -1,5 +1,9 @@
 <template>
-  <div class="menu-container" v-if="store.state.isLogin">
+<div v-if="!store.state.isLogin" class="main_login">
+   <PageLogin />
+</div>
+<div v-else>
+  <div class="menu-container">
     <a-menu
       style="background-color: #47b28c; padding: 10px 0 0"
       v-model:selectedKeys="current"
@@ -29,6 +33,16 @@
         <DownOutlined />
       </a-button>
     </a-dropdown>
+    <a-dropdown class="btn-lenguage" :trigger="['click']">
+      <template #overlay>
+        <a-menu @click="handleLogOut">
+          <a-menu-item key="1">  {{ $t("logout") }} </a-menu-item>
+        </a-menu>
+      </template>
+      <a-button class="btn-main">
+       <LogoutOutlined />
+      </a-button>
+    </a-dropdown>
   </div>
    
   <a-drawer
@@ -45,22 +59,31 @@
   <div>
     <router-view></router-view>
   </div>
+</div>
+  
 </template>
 <script lang="ts">
 import { reactive, toRefs, onMounted, onUpdated, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { DownOutlined ,CalculatorOutlined} from "@ant-design/icons-vue";
+import { DownOutlined ,CalculatorOutlined, LogoutOutlined} from "@ant-design/icons-vue";
 import type { MenuProps } from "ant-design-vue";
 import { useStore } from 'vuex'
 import './css/AppStyle.css';
 import Calculador from './components/Calculador.vue'
+import PageLogin from './components/PageLogin.vue'
+import { logOut} from './util/fireBase';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+
 
 export default {
   components: {
     DownOutlined,
-    Calculador,
     CalculatorOutlined,
+    LogoutOutlined,
+    PageLogin,
+    Calculador,
   },
   setup() {
     const data = reactive({
@@ -91,6 +114,14 @@ export default {
       data.selectedLanguage = lang;
     };
 
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, you can access user.uid here
+        console.log("[PageApp] user:",user.uid);
+        store.commit("logIn", user)
+      }
+    });
     // const titleClick = (e: Event) => {
     //   console.log('titleClick', e);
     // };
@@ -103,6 +134,17 @@ export default {
       } else if (e.key == 3) {
         setLocale("zh");
       }
+    };
+
+    const handleLogOut: MenuProps["onClick"] = (e) => {
+      if (e.key == 1) {
+        logOut().then(() => {
+          store.commit("RESET_STATE")
+          store.commit("logOut")
+          //上传数据库
+        }
+      )
+      } 
     };
 
     const handleMenu: MenuProps["onClick"] = (e) => {
@@ -125,65 +167,34 @@ export default {
       });
     };
 
-    /*
-    const changeStep =() => {
-      console.log("step:", current.value)
-      switch(current.value){
-        case 0: {
-          router.push({
-            name: "table",
-          })
-          break;
-        }
-        case 1: {
-          router.push({
-            name: "client",
-          })
-          break;
-        }
-        case 2: {
-          router.push({
-            name: "pdf",
-          })
-          break;
-        }
-
-      }
-    };
-*/
-
     onMounted(() => {
       console.log("onMounted");
-      if(store.state.isLogin){
         router.push({
           name: "main",
         });
-      }
-      else{
-        router.push({
-          name: "login",
-        });
-      }
-      
     });
 
-    /*
-    onUpdated(() => {
-      console.log("up")
-
-    })
-   */
+    
+    // onUpdated(() => {
+    //   console.log("up")
+    //   if(store.state.isLogin){
+    //     router.push({
+    //       name: "main",
+    //     });
+    //   }
+    // })
+   
 
     return {
       ...refData,
-      handleMenuClick,
-      current,
-      handleMenu,
       t,
       locale,
-      showDrawer,
       store,
-      //changeStep,
+      current,
+      handleMenuClick,
+      handleLogOut,
+      handleMenu,
+      showDrawer,
     };
   },
 };

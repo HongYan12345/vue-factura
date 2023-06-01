@@ -12,8 +12,12 @@
       <template #header>
         <div style="margin-left: 0;"> <span>{{$t('total_euro')}}</span></div>
         <div class="space"></div>
-        <div><div v-if="isIva">con iva</div>
-        <div v-if="isRe">con re</div></div>
+        <div>
+          <div v-if="isIva">con iva</div>
+          <div v-else>sin iva</div>
+          <div v-if="isRe">con re</div>
+          <div v-else>sin re</div>
+        </div>
         <div class="space"></div>
         <div class="large-font"><span >{{ total_euros.toFixed(2) }}€</span></div>
           

@@ -241,7 +241,6 @@ export default {
       formState.poblation = ""
       formState.cp = ""
       formState.telefono = ""
-      updatePage()
     }
 
     const delectCliente = (telefono: string) => {
@@ -250,6 +249,7 @@ export default {
     }
     const showClient = () => {
       clients.value = []
+      console.log("[PageClient]show client")
       queryAllTree().then((value) => {
         value.forEach((r: any) => {
           clients.value.push({
@@ -281,8 +281,8 @@ export default {
 
 
     onMounted(() => {
-      console.log("up")
       showClient()
+    
     })
 
     return {
