@@ -113,9 +113,10 @@ import {
   insertArticulo,
   queryAllArticulo,
 } from "../util/dbSqlite"
+import { addOrUpdateData,  deleteData, getAllData} from "../util/dbFirebase"
 import { FormState} from '../util/interface'
-import { update } from 'lodash-es'
-import { message } from 'ant-design-vue';
+import { message } from 'ant-design-vue'
+import { useStore } from 'vuex'
 
 export default {
   components: {
@@ -163,6 +164,9 @@ export default {
       }
     }
 
+    //store
+    const store = useStore()
+
     //新建用户信息
     const visible = ref<boolean>(false)
 
@@ -188,24 +192,52 @@ export default {
     };
     const handleOkArticulo = () => {
       confirmLoading.value = true;
-      insertArticulo(data.articulo_name).then((value) => {
+      
+      if(!store.state.isVisitor){
+        const dato = {
+        name:data.articulo_name
+        }
+        addOrUpdateData("articulos", data.articulo_name, dato).then((value) => {
+          data.modifica_articulo = false;
+          confirmLoading.value = false;
+          data.articulo_name = "";
+          showArticulo();
+        });
+      }
+      else{
+        insertArticulo(data.articulo_name).then((value) => {
         data.modifica_articulo = false;
         confirmLoading.value = false;
         data.articulo_name = "";
         showArticulo();
       });
+      }
     };
 
     const showArticulo = () => {
-      queryAllArticulo().then((value) => {
-        console.log("[PageTable]articulo en base de dato:", value);
-        value.forEach((r: any) => {
-          articulo_list.value.push({
-            value: r.name,
-          });
+      if(store.state.isVisitor){
+        queryAllArticulo().then((value) => {
+          console.log("[PageClient]articulo en base de dato:", value);
+          value.forEach((r: any) => {
+            articulo_list.value.push({
+              value: r.name,
+            })
+          })
+        })
+      }
+      else{
+        getAllData("articulos").then(allData => {
+          console.log("[PageClient]articulo en FireBase:",allData);
+          allData.forEach((r: any) => {
+            articulo_list.value.push({
+              value: r.name,
+            })
+          })
+        }).catch(error => {
+          console.error("Error getting data: ", error);
         });
-      });
-    };
+      }
+    }
 
     const visibleTable = ref<boolean>(false)
 
@@ -233,7 +265,13 @@ export default {
         forma: formState.forma,
       }
       console.log("bd:", dato)
-      insertClient(dato)
+      
+      if(!store.state.isVisitor){
+        addOrUpdateData("clientes", formState.telefono, dato)
+      }
+      else{
+        insertClient(dato)
+      }
       formState.name = "" 
       formState.direccion = ""
       formState.nif = ""
@@ -244,21 +282,42 @@ export default {
     }
 
     const delectCliente = (telefono: string) => {
-      deleteClient(Number(telefono))
+      if(!store.state.isVisitor){
+        deleteData("clientes", telefono)
+      }
+      else{
+        deleteClient(Number(telefono))
+      }
       updatePage()
     }
     const showClient = () => {
       clients.value = []
       console.log("[PageClient]show client")
-      queryAllTree().then((value) => {
+      if(store.state.isVisitor){
+        queryAllTree().then((value) => {
         value.forEach((r: any) => {
           clients.value.push({
             value: r,
             label: r.name + ' ,' + r.telefono,
           })
         })
-        console.log("lista clients:", clients.value)
-      })
+          console.log("lista clients:", clients.value)
+        })
+      }
+      else{
+        getAllData("clientes").then(allData => {
+          console.log("[PageTable]clientes en FireBase:",allData);
+          allData.forEach((r: any) => {
+            clients.value.push({
+              value: r,
+              label: r.name + ' ,' + r.telefono,
+            })
+          })
+        }).catch(error => {
+          console.error("Error getting data: ", error);
+        });
+      }
+      
     }
 
     const handleChange = () => {

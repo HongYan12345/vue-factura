@@ -63,6 +63,8 @@
           <a-col :span="8">
             <a-button v-if="formState.isRecupera" :loading="formState.loading" @click="recuperar()">Recuperar</a-button>
             <a-button v-if="!formState.isRecupera" :loading="formState.loading" @click="googleSignIn()"><template #icon><GoogleOutlined /></template>Google</a-button>
+            <a-button v-if="!formState.isRecupera" :loading="formState.loading" @click="loginVisitor()"><template #icon><GoogleOutlined /></template>{{$t('visitor')}}</a-button>
+
           </a-col>
           
         </div>
@@ -215,6 +217,10 @@ export default {
       formState.loading_login = false;
     }
 
+    const loginVisitor = () => {
+      store.commit("loginVisitor")
+    }
+
     const googleSignIn = async () => {
       googleLogin()
     }
@@ -247,6 +253,7 @@ export default {
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
       handleFinishFailed,
+      loginVisitor,
       googleSignIn,
       sendForm,
       recuperar,

@@ -2,14 +2,13 @@ const { app } = require('@electron/remote');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose()
 let db
+//path user
 let userDataDir = app.getPath('userData');
-// 将路径和文件名连接起来，形成一个绝对路径
 let dbPath = path.join(userDataDir, 'base.db');
 
 
-// 连接数据库
+// connectar base de datos
 function conn() {
-  console.log(dbPath)
   if (!db || !db.open) {
     db = new sqlite3.Database(dbPath)
     //db = new sqlite3.Database('base.db')
@@ -18,15 +17,17 @@ function conn() {
 }
 
 export const initAllTable = () => {
+  return new Promise((resolve, reject) => {
   initTable()
   initTableArticulo()
   initTableEmpresa()
   initTableFactura()
+  })
 }
 
 // 初始化数据表
 function initTable() {
-  console.log("init table user")
+  //console.log("init table user")
   return new Promise((resolve, reject) => {
     let db = conn()
     db.serialize(() => {
@@ -81,7 +82,7 @@ export const selectClient = (telefono) => {
 }
 
 export const queryAllTree = () => {
-  console.log("show user")
+  //console.log("show user")
   return new Promise((resolve, reject) => {
     let db = conn()
     db.all('select * from user order by telefono', (err, rows) => {
@@ -92,7 +93,7 @@ export const queryAllTree = () => {
 }
 
 function initTableArticulo() {
-  console.log("init table articulo")
+  //console.log("init table articulo")
   return new Promise((resolve, reject) => {
     let db = conn()
     db.serialize(() => {
@@ -133,7 +134,7 @@ export const deleteArticulo = (name) => {
 }
 
 export const queryAllArticulo = () => {
-  console.log("show articulo")
+  //console.log("show articulo")
   return new Promise((resolve, reject) => {
     let db = conn()
     db.all('select * from articulo order by name', (err, rows) => {
@@ -144,7 +145,7 @@ export const queryAllArticulo = () => {
 }
 
 function initTableEmpresa() {
-  console.log("init table empresa")
+  //console.log("init table empresa")
   return new Promise((resolve, reject) => {
     let db = conn()
     db.serialize(() => {
@@ -186,7 +187,7 @@ export const deleteEmpresa = () => {
 }
 
 export const queryEmpresa = () => {
-  console.log("show empresa")
+  //console.log("show empresa")
   return new Promise((resolve, reject) => {
     let db = conn()
     db.all('select * from empresa', (err, rows) => {
@@ -196,18 +197,9 @@ export const queryEmpresa = () => {
   })
 }
 
-export const queryAllProducto = () => {
-  return new Promise((resolve, reject) => {
-    let db = conn()
-    db.all('select * from producto order by name', (err, rows) => {
-      if (err) reject(err)
-      resolve(rows || [])
-    })
-  })
-}
 
 function initTableFactura() {
-  console.log("init table factura");
+  //console.log("init table factura");
   return new Promise((resolve, reject) => {
     let db = conn();
     db.serialize(() => {
@@ -256,7 +248,7 @@ export const deleteFactura = (id) => {
 }
 
 export const queryFactura = () => {
-  console.log("[Bdsqlite] show factura")
+  //console.log("[Bdsqlite] show factura")
   return new Promise((resolve, reject) => {
     let db = conn()
     db.all('select * from factura', (err, rows) => {

@@ -19,6 +19,7 @@ export const store = new Vuex.Store({
     num: "",
     isLogin: false,
     user:ref(),
+    isVisitor: false
   },
 
   mutations: {
@@ -67,9 +68,15 @@ export const store = new Vuex.Store({
       state.user = objStorage
     },
 
+    loginVisitor: (state) =>{
+      state.isLogin = true
+      state.isVisitor = true
+    },
+
     logOut: (state) =>{
       state.isLogin = false
       state.user = ref()
+      state.isVisitor = false
     },
 
 

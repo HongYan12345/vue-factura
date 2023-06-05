@@ -37,6 +37,7 @@
       <template #overlay>
         <a-menu @click="handleLogOut">
           <a-menu-item key="1">  {{ $t("logout") }} </a-menu-item>
+          <a-menu-item key="2" v-if="store.state.isVisitor">  {{ $t("upload") }} </a-menu-item>
         </a-menu>
       </template>
       <a-button class="btn-main">
@@ -141,9 +142,11 @@ export default {
         logOut().then(() => {
           store.commit("RESET_STATE")
           store.commit("logOut")
-          //上传数据库
         }
       )
+      }
+      else if(e.key == 2){
+        uploadFirebase()
       } 
     };
 
@@ -159,6 +162,10 @@ export default {
       } else {
       }
     };
+
+    const uploadFirebase = () => {
+      store.commit('logOut')
+    }
 
     //管理客户
     const goClient = () => {

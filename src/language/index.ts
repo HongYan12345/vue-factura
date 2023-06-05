@@ -36,6 +36,8 @@ const messages={
     export: "Exportar",
     registro: "Registro", 
     logout:"Salir",
+    visitor:"Visitor",
+    upload:"Subir dato",
   },
   en: {
     lenguage: "Lenguage",
@@ -72,6 +74,8 @@ const messages={
     export: "Export",
     registro: "Register", 
     logout:"Exit",
+    visitor:"Visitor",
+    upload:"Upload dato",
   },
   zh: {
     lenguage: "语言",
@@ -108,7 +112,8 @@ const messages={
     export: "导出表格",
     registro: "注册", 
     logout:"退出",
-    
+    visitor:"游客登录",
+    upload:"上传数据",
   },
 };
 

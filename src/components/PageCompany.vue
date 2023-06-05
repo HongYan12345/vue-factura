@@ -94,8 +94,8 @@ import { reactive,
         onMounted} from 'vue'
 import { useRouter} from 'vue-router'
 import { useStore } from 'vuex'
-import { insertEmpresa,
-        queryEmpresa, queryAllTree, selectClient} from '../util/dbSqlite'
+import { insertEmpresa, queryEmpresa, queryAllTree, selectClient} from '../util/dbSqlite'
+import { addOrUpdateData, getData, getAllData} from "../util/dbFirebase"
 import { useI18n} from "vue-i18n"
 import dayjs from 'dayjs'
 
@@ -155,37 +155,78 @@ export default {
           poblation: data.empresa_poblation,
           nif: data.empresa_nif
       }
-      insertEmpresa(newData).then((value) => {
-        data.modifica_dato = false
-        confirmLoading.value = false
-      })
+      if(!store.state.isVisitor){
+        addOrUpdateData("empresa", newData.id, newData).then((value) => {
+          data.modifica_dato = false
+          confirmLoading.value = false
+        });
+      }
+      else{
+        insertEmpresa(newData).then((value) => {
+          data.modifica_dato = false
+          confirmLoading.value = false
+        })
+      }
+      
     }
     const showEmpresa = () => {
-      queryEmpresa().then((value) => {
-        console.log("empresa en base de dato:",value)
-        if(value[0]){
-          data.empresa_name = value[0].name
-          data.empresa_telefono = value[0].telefono
-          data.empresa_direccion = value[0].direccion
-          data.empresa_cp = value[0].cp
-          data.empresa_nif = value[0].nif
-          data.empresa_poblation = value[0].poblation
-        }
-      })
+      if(!store.state.isVisitor){
+        getAllData("empresa").then((value) => {
+          console.log("[PageCompany]empresa en firebase:",value)
+          if(value[0]){
+            data.empresa_name = value[0].name
+            data.empresa_telefono = value[0].telefono
+            data.empresa_direccion = value[0].direccion
+            data.empresa_cp = value[0].cp
+            data.empresa_nif = value[0].nif
+            data.empresa_poblation = value[0].poblation
+          }
+        }).catch(error => {
+          console.error("Error getting data: ", error);
+        });
+      }
+      else{
+        queryEmpresa().then((value) => {
+          console.log("[PageCompany]empresa en base de dato:",value)
+          if(value[0]){
+            data.empresa_name = value[0].name
+            data.empresa_telefono = value[0].telefono
+            data.empresa_direccion = value[0].direccion
+            data.empresa_cp = value[0].cp
+            data.empresa_nif = value[0].nif
+            data.empresa_poblation = value[0].poblation
+          }
+        })
+      }
+      
     }
 
     const showClient = () => {
-      queryAllTree().then((value) => {
-        
-        value.forEach((r: any) => {
-          console.log(r)
-          clients_list.value.push({
-            value: r.telefono,
-            label: r.telefono + ' ' + r.name
+      if(!store.state.isVisitor){
+        getAllData("clientes").then(allData => {
+          console.log("[PageCompany]list_client en FireBase:",allData);
+          allData.forEach((r: any) => {
+            clients_list.value.push({
+              value: r.telefono,
+              label: r.telefono + ' ' + r.name
+            })
           })
+        }).catch(error => {
+          console.error("Error getting data: ", error);
+        });
+      }
+      else{
+        queryAllTree().then((value) => {
+          value.forEach((r: any) => {
+            clients_list.value.push({
+              value: r.telefono,
+              label: r.telefono + ' ' + r.name
+            })
+          })
+          console.log("[PageCompany]list_client en base de dato:", clients_list)
         })
-        console.log("list_client:", clients_list)
-      })
+      }
+      
     }
 
     
@@ -223,19 +264,37 @@ export default {
     }
 
     const selectCliente = (value: any, option: any)=>{
-      console.log(value)
-      selectClient(value).then((value) => {
-        console.log("select dato client:",value)
-        if(value[0]){
-          data.client_name = value[0].name
-          data.client_direccion = value[0].direccion
-          data.client_telefono = value[0].telefono
-          data.client_cp = value[0].cp
-          data.client_poblation = value[0].poblation
-          data.client_nif = value[0].nif
-          data.client_forma = value[0].forma
+      if(!store.state.isVisitor){
+        getData("clientes", value).then((value:any) => {
+          console.log("select dato client en firebase:",value)
+          if(value[0]){
+            data.client_name = value[0].name
+            data.client_direccion = value[0].direccion
+            data.client_telefono = value[0].telefono
+            data.client_cp = value[0].cp
+            data.client_poblation = value[0].poblation
+            data.client_nif = value[0].nif
+            data.client_forma = value[0].forma
         }
-      })
+        }).catch(error => {
+          console.error("Error getting data: ", error);
+        });
+      }
+      else{
+        selectClient(value).then((value) => {
+          console.log("select dato client en base de dato:",value)
+          if(value[0]){
+            data.client_name = value[0].name
+            data.client_direccion = value[0].direccion
+            data.client_telefono = value[0].telefono
+            data.client_cp = value[0].cp
+            data.client_poblation = value[0].poblation
+            data.client_nif = value[0].nif
+            data.client_forma = value[0].forma
+        }
+        })
+      }
+      
     }
 
     

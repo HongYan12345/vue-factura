@@ -151,6 +151,7 @@ import { DataItem, FormState } from "../util/interface";
 import dayjs from 'dayjs';
 import { DatePicker, message } from 'ant-design-vue';
 import "../css/PdfStyle.css"
+import { addOrUpdateData} from "../util/dbFirebase"
 
 export default {
   components: { DatePicker},
@@ -240,7 +241,7 @@ export default {
           key: "iva",
         },
         {
-          title: "%R.E",
+          title: "5.2%R.E",
           dataIndex: "re",
           key: "re",
         },
@@ -277,7 +278,22 @@ export default {
       const dataFinalJson = JSON.stringify(data.dataSource_final[0]);
       const dataEmpresaJson = JSON.stringify(data.data_empresa);
       const dataClienteJson = JSON.stringify(data.data_cliente);
-      insertFactura(dataClienteJson, dataEmpresaJson, dataItemJson, data.num, data.date, data.forma, dataFinalJson)
+      const dato = {
+        empresa: dataEmpresaJson,
+        euro_final: dataFinalJson,
+        factura_date: data.date,
+        factura_num: data.num,
+        forma: data.forma,
+        id: data.num+" , "+data.date,
+        item_list: dataItemJson,
+        user: dataClienteJson
+      }
+      if(!store.state.isVisitor){
+        addOrUpdateData("facturas", dato.id, dato)
+      }
+      else{
+        insertFactura(dataClienteJson, dataEmpresaJson, dataItemJson, data.num, data.date, data.forma, dataFinalJson)
+      }
       message.success('保存成功')
     };
 

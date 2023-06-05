@@ -10,6 +10,7 @@ export async function loginUser(email, password){
       const user = userCredential.user;
       console.log("success", user)
       message.success("success")
+      console.log(firebase.auth().currentUser)
       return user
   })
   .catch((error) => {

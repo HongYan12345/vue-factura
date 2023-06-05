@@ -25,3 +25,14 @@ export interface FormState{
     re: string;
     total_final: string;
   }
+
+  export interface FacturaState{
+    empresa: string; 
+    euro_final: string;
+    factura_date: string;
+    factura_num: string;
+    forma: string;
+    id: string;
+    item_list: string;
+    user: string;
+  }

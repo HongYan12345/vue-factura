@@ -20,6 +20,8 @@ import { useStore } from 'vuex'
 import { initAllTable ,queryFactura } from '../util/dbSqlite'
 import { useI18n} from "vue-i18n"
 import '../css/MainStyle.css';
+import { uploadAllTable} from '../util/dbFirebase'
+import { message } from 'ant-design-vue'
 
 export default defineComponent({
   components: {
@@ -28,12 +30,28 @@ export default defineComponent({
   },
   setup() {
     initAllTable()
+    uploadAllTable()
     const data = reactive({
       error: false,
       isCreate: false,
       
     })
     const refData = toRefs(data)
+    const initAndUpload = async () => {
+      try {
+        // Initialize all tables
+        await initAllTable();
+  
+        // Upload all tables to Firebase
+        await uploadAllTable();
+      } catch(error) {
+        message.error('Error initializing and uploading tables:'+ error);
+        console.error('Error initializing and uploading tables:', error);
+      }
+}
+
+// base de dato
+    initAndUpload();
 
 //i18n
     const {t, locale} = useI18n()
@@ -62,15 +80,11 @@ export default defineComponent({
       })
     }
 
-    const showFactura =() => {
-      queryFactura().then((value) => {
-        console.log("factura en base de dato:",value)
-      })
-    }
+    
 
 
     onMounted(() => {
-     showFactura()
+     
     })
    
 

@@ -6,21 +6,25 @@
 <a-list
         class="a-list"
         item-layout="horizontal"
-        :data-source="factura_list"
+        :data-source="sortedFacturaList"
         :locale="{ emptyText: ' ' }"
       >
         <template #renderItem="{ item }">
           <a-list-item>
             <div class="item-row">
-              <a class="item-details" @click="goFactura(item.value)">
+              <a class="item-details" @click="goFactura(item)">
                 <div>
-                  <div>{{parsedItem(item.value)}}</div>
+                  <div>{{parsedItem(item)}}</div>
                  
                 </div>
                 
               </a>
-              <a-button @click="newFactura(item.value)">
+              <a-button @click="newFactura(item)">
                   <CopyOutlined />
+              </a-button>
+              &nbsp
+              <a-button @click="deletFactura(item)">
+                  <DeleteOutlined />
                 </a-button>
             </div>
           </a-list-item>
@@ -32,51 +36,65 @@
 
 <script lang="ts">
 import { defineComponent, reactive, toRefs, ref,
-        onMounted,} from 'vue'
-import { queryFactura } from '../util/dbSqlite'
+        onMounted, computed } from 'vue'
+import { queryFactura, deleteFactura} from '../util/dbSqlite'
 import { useRouter} from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n} from "vue-i18n"
-import { CopyOutlined} from '@ant-design/icons-vue'
-
+import { CopyOutlined, DeleteOutlined} from '@ant-design/icons-vue'
+import { FacturaState} from '../util/interface'
+import { deleteData, getAllData} from "../util/dbFirebase"
 
 export default defineComponent({
   components: {
     CopyOutlined,
+    DeleteOutlined
   },
   setup() {
     const data = reactive({
-      
-      
     })
-
-    const factura_list = ref([] as Array<{}>);
     const refData = toRefs(data)
 
 //i18n
     const {t, locale} = useI18n()
-    const setLocale = (lang: string) => {
-      locale.value = lang
-    };
     
 
 //router
     const router = useRouter()
 //store
     const store = useStore()
-
+    
+    const factura_list = ref([] as Array<FacturaState>)
     const showFactura =() => {
-      queryFactura().then((value) => {
-        console.log("factura en base de dato:",value)
-        value.forEach((r: any) => {
-          factura_list.value.push({
-            value: r,
-          });
-      })
-      
+      if(!store.state.isVisitor){
+        getAllData("facturas").then(allData => {
+          console.log("[PageHistory]factura en FireBase:",allData);
+          allData.forEach((r: FacturaState) => {
+            factura_list.value.push(r)
+          })
+        }).catch(error => {
+          console.error("Error getting data: ", error);
+        });
+      }
+      else{
+        queryFactura().then((value) => {
+        console.log("[PageHistory]factura en base de dato:",value)
+        value.forEach((r: FacturaState) => {
+          factura_list.value.push(r)
         })
+      })
+      }
+      
     }
 
+    const sortedFacturaList = computed(() => {
+      return [...factura_list.value].sort((a, b) => {
+        // Convert date from "DD/MM/YYYY" to "YYYY-MM-DD"
+        const dateA = a.factura_date.split('/').reverse().join('-');
+        const dateB = b.factura_date.split('/').reverse().join('-');
+        return  new Date(dateB).getTime() - new Date(dateA).getTime();
+      });
+    });
     const goBack = () => {
       clearAll()
       router.back();
@@ -112,7 +130,7 @@ export default defineComponent({
        })
     }
 
-    const goFactura = (item:any) => {
+    const goFactura = (item:FacturaState) => {
       saveAll(item)
       router.push({
        name: "pdf",
@@ -120,17 +138,26 @@ export default defineComponent({
       });
     };
 
-    const newFactura = (item:any) => {
+    const newFactura = (item:FacturaState) => {
       saveAll(item)
       router.push({
        name: "company",
       });
     };
 
-    const parsedItem = (item:any)=>{
+    const deletFactura = (item:FacturaState) => {
+      if(!store.state.isVisitor){
+        deleteData("facturas", item.id)
+      }
+      else{
+        deleteFactura(item.id)
+      }
+      
+    }
+
+    const parsedItem = (item:FacturaState)=>{
       const parsedEmpresa = JSON.parse(item.empresa);
-      console.log(parsedEmpresa)
-      return "Nº: " + item.factura_num + ", " + parsedEmpresa.name + ", " + item.factura_date;
+      return "Nº: " + item.factura_num + ", " + item.factura_date + ", "  + parsedEmpresa.name;
     }
 
     onMounted(() => {
@@ -146,6 +173,8 @@ export default defineComponent({
       parsedItem,
       goFactura,
       newFactura,
+      sortedFacturaList,
+      deletFactura,
     }
   },
 });

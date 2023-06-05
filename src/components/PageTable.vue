@@ -186,6 +186,7 @@ import {
 } from "../util/dbSqlite";
 import { useI18n } from "vue-i18n";
 import { DataItem } from "../util/interface";
+import { getAllData} from "../util/dbFirebase"
 
 export default {
   components: {
@@ -356,14 +357,29 @@ export default {
       confirmLoading.value = false;
     };
     const showArticulo = () => {
-      queryAllArticulo().then((value) => {
-        console.log("[PageTable]articulo en base de dato:", value);
-        value.forEach((r: any) => {
-          articulo_list.value.push({
-            value: r.name,
+      if(!store.state.isVisitor){
+        getAllData("articulos").then(allData => {
+          console.log("[PageTable]articulo en FireBase:",allData);
+          allData.forEach((r: any) => {
+            articulo_list.value.push({
+              value: r.name,
+            })
+          })
+        }).catch(error => {
+          console.error("Error getting data: ", error);
+        });
+      }
+      else{
+        queryAllArticulo().then((value) => {
+          console.log("[PageTable]articulo en base de dato:", value);
+          value.forEach((r: any) => {
+            articulo_list.value.push({
+              value: r.name,
+            });
           });
         });
-      });
+      }
+      
     };
 
     const checkInput = () => {
