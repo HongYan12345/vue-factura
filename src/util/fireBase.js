@@ -10,7 +10,6 @@ export async function loginUser(email, password){
       const user = userCredential.user;
       console.log("success", user)
       message.success("success")
-      console.log(firebase.auth().currentUser)
       return user
   })
   .catch((error) => {
@@ -39,20 +38,28 @@ export async function registraLogin(email, password){
   const auth = getAuth();
   return createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-      // Signed in
-      const user = userCredential.user;
-      console.log("success", user)
-      message.success("success")
-      return user
-  })
-  .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log("[error]", errorCode, errorMessage)
-      throw error;
-  });
-}
+          // Signed in
+          const user = userCredential.user;
 
+          // Send email verification
+          return sendEmailVerification(user).then(() => {
+              console.log("Verification email sent.");
+              message.success("success, verification email has been sent");
+              return user;
+          })
+          .catch((error) => {
+              // Handle email verification error
+              console.error("Error sending verification email: ", error);
+              throw error;
+          });
+      })
+      .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log("[error]", errorCode, errorMessage)
+          throw error;
+      });
+}
 export async function logOut(){
   const auth = getAuth();
   try {

@@ -22,6 +22,7 @@ const messages={
     modifica_comp: "Modificar información de la empresa",
     modifica_person: "Modificar información del usuario",
     modifica_articulo: "Modificar articulo",
+    modifica_cliente: "Modificar cliente",
     add_producto: "Añadir producto",
     clear: "Limpiar",
     name_empresa: "Nombre de la empresa",
@@ -38,6 +39,7 @@ const messages={
     logout:"Salir",
     visitor:"Visitor",
     upload:"Subir dato",
+    repassword:"olvida la contraseña",
   },
   en: {
     lenguage: "Lenguage",
@@ -60,6 +62,7 @@ const messages={
     modifica_comp: "Modify company information",
     modifica_person: "Modify user information",
     modifica_articulo: "Modify articulo",
+    modifica_cliente: "Modify client",
     add_producto: "Add producto",
     clear: "Clear",
     name_empresa: "Company name",
@@ -76,6 +79,8 @@ const messages={
     logout:"Exit",
     visitor:"Visitor",
     upload:"Upload dato",
+    repassword:"forget the password",
+    
   },
   zh: {
     lenguage: "语言",
@@ -98,6 +103,7 @@ const messages={
     modifica_comp: "修改公司信息",
     modifica_person: "修改用户信息",
     modifica_articulo: "修改产品信息",
+    modifica_cliente: "修改客户信息",
     add_producto: "添加商品",
     clear: "清除",
     name_empresa: "公司名称",
@@ -114,10 +120,11 @@ const messages={
     logout:"退出",
     visitor:"游客登录",
     upload:"上传数据",
+    repassword:"忘记密码"
   },
 };
 
-console.log(JSON.stringify(messages));
+//console.log(JSON.stringify(messages));
 
 const i18n = createI18n({
   locale: "zh",

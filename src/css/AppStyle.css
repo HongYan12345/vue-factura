@@ -37,3 +37,7 @@
     background: #008661 !important;
     border-color: #47B28C !important;
 }
+
+.loading{
+    align-items: center;
+}

@@ -1,26 +1,36 @@
 <template>
   <div>
-    <!-- <div class="button-container">
-      <a-button @click="goBack" class="btn-back" size="large">{{$t('back')}}</a-button>
-    </div> -->
-    <div>
+    <br>
+    <div v-if="!modifica_articulo">
       <a-button @click="modificaArticulo">{{ $t("modifica_articulo") }}</a-button>
     </div>
+    <div v-else>
+      <a-button @click="modificaArticulo">{{ $t("modifica_cliente") }}</a-button>
+    </div>
+    <br>
+    <div v-if="!modifica_articulo">
+      <a-input class="search-input" placeholder="Search" v-model:value="searchString">
+         <template #suffix>
+        <SearchOutlined />
+        </template>
+      </a-input>
+    </div>
+    
     
   
-    <div>
+  
+  
+    <div v-if="!modifica_articulo">
       <a-button @click="showDrawer" class="btn-add" type="text" block
         ><template #icon><PlusOutlined style="font-size: 20px;"/></template
       ></a-button>
-
-    
     </div>
     
-    <div>
+    <div v-if="!modifica_articulo">
       <a-list
         class="a-list"
         item-layout="horizontal"
-        :data-source="clients"
+        :data-source="filteredClients"
         :locale="{ emptyText: ' ' }"
       >
         <template #renderItem="{ item }">
@@ -40,6 +50,10 @@
           </a-list-item>
         </template>
       </a-list>
+    </div>
+
+    <div v-else>
+      <PageArticulo/>
     </div>
 
 
@@ -79,14 +93,10 @@
       </a-form>
     </a-drawer>
 
-    <a-modal
-    v-model:visible="modifica_articulo"
-    title="修改产品类型"
-    :confirm-loading="confirmLoading"
-    @ok="handleOkArticulo"
-  >
-    <a-input v-model:value="articulo_name" spellcheck="false">{{ $t("name_producto") }}:</a-input>
-  </a-modal>
+
+   
+
+  
 
     
   </div>
@@ -98,29 +108,31 @@ import {
   reactive,
   toRefs,
   onMounted,
-  onUpdated,
   ref,
   toRaw,
   UnwrapRef,
+  computed,
 } from "vue"
 import { useRouter } from "vue-router"
-import { PlusOutlined, DeleteOutlined} from '@ant-design/icons-vue'
+import { PlusOutlined, DeleteOutlined, SearchOutlined} from '@ant-design/icons-vue'
 import {
   initAllTable,
   insertClient,
   deleteClient,
   queryAllTree,
-  insertArticulo,
-  queryAllArticulo,
 } from "../util/dbSqlite"
 import { addOrUpdateData,  deleteData, getAllData} from "../util/dbFirebase"
 import { FormState} from '../util/interface'
 import { message } from 'ant-design-vue'
 import { useStore } from 'vuex'
+import PageArticulo from './PageArticulo.vue'
 
 export default {
   components: {
-    PlusOutlined, DeleteOutlined
+    PlusOutlined, 
+    DeleteOutlined, 
+    SearchOutlined,
+    PageArticulo,
   },
   setup() {
     const data = reactive({
@@ -133,7 +145,7 @@ export default {
     const router = useRouter()
     const confirmLoading = ref<boolean>(false);
     const clients = ref([] as Array<{ value: string; label: string }>)
-    const articulo_list = ref([] as Array<{ value: string }>);
+    const searchString = ref('');
 
     const formState: UnwrapRef<FormState> = reactive({
       name: "",
@@ -188,65 +200,7 @@ export default {
 
     //add articulo
     const modificaArticulo = () => {
-      data.modifica_articulo = true;
-    };
-    const handleOkArticulo = () => {
-      confirmLoading.value = true;
-      
-      if(!store.state.isVisitor){
-        const dato = {
-        name:data.articulo_name
-        }
-        addOrUpdateData("articulos", data.articulo_name, dato).then((value) => {
-          data.modifica_articulo = false;
-          confirmLoading.value = false;
-          data.articulo_name = "";
-          showArticulo();
-        });
-      }
-      else{
-        insertArticulo(data.articulo_name).then((value) => {
-        data.modifica_articulo = false;
-        confirmLoading.value = false;
-        data.articulo_name = "";
-        showArticulo();
-      });
-      }
-    };
-
-    const showArticulo = () => {
-      if(store.state.isVisitor){
-        queryAllArticulo().then((value) => {
-          console.log("[PageClient]articulo en base de dato:", value);
-          value.forEach((r: any) => {
-            articulo_list.value.push({
-              value: r.name,
-            })
-          })
-        })
-      }
-      else{
-        getAllData("articulos").then(allData => {
-          console.log("[PageClient]articulo en FireBase:",allData);
-          allData.forEach((r: any) => {
-            articulo_list.value.push({
-              value: r.name,
-            })
-          })
-        }).catch(error => {
-          console.error("Error getting data: ", error);
-        });
-      }
-    }
-
-    const visibleTable = ref<boolean>(false)
-
-    const showTable = () => {
-      visibleTable.value = true
-    }
-    const onCloseTable = () => {
-      visibleTable.value = false
-      updatePage()
+      data.modifica_articulo = !data.modifica_articulo
     }
 
     const goBack = () => {
@@ -282,12 +236,11 @@ export default {
     }
 
     const delectCliente = (telefono: string) => {
-      if(!store.state.isVisitor){
-        deleteData("clientes", telefono)
-      }
-      else{
-        deleteClient(Number(telefono))
-      }
+      
+      deleteData("clientes", telefono)
+     
+      deleteClient(Number(telefono))
+      
       updatePage()
     }
     const showClient = () => {
@@ -320,6 +273,15 @@ export default {
       
     }
 
+    const filteredClients = computed(() => {
+      console.log("s",searchString)
+      if (searchString.value) {
+        return clients.value.filter(item => item.label.includes(searchString.value));
+      }
+      return clients.value;
+      
+    })
+
     const handleChange = () => {
       console.log(data.valueClient)
     }
@@ -346,21 +308,20 @@ export default {
 
     return {
       ...refData,
+      searchString,
       formState,
       onSubmit,
       goBack,
       showDrawer,
       onClose,
-      onCloseTable,
       editCliente,
       visible,
-      visibleTable,
       delectCliente,
       clients,
-      handleChange,
       modificaArticulo,
-      handleOkArticulo,
+      handleChange,
       confirmLoading,
+      filteredClients,
     }
   },
 }

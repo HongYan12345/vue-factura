@@ -74,6 +74,11 @@ body{
   background-color:  #b8d6ce !important;
 }
 
+.btn-normal{
+  background-color: #008661 !important;
+  color: #fff !important;
+}
+
 .btn-next{
   background-color: #008661 !important;
   color: #fff !important;
@@ -161,5 +166,12 @@ body{
   display: flex;
   flex-direction: column;
   justify-content:center;
+  align-items: center; 
   height: 100%;
+}
+
+.search-input{
+  margin-left: 10px!important;
+  margin-right: 20px!important;
+  width: 95%!important;
 }

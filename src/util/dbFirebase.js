@@ -21,7 +21,7 @@ export async function addOrUpdateData(collectionName, docId, data) {
 export async function getData(collectionName, docId) {
   const auth = getAuth();
   const userId = auth.currentUser.uid; 
-  const docRef = doc(db, "users", userId, collectionName, docId);
+  const docRef = doc(db, `users/${userId}/${collectionName}/${docId}`);
     const docSnap = await getDoc(docRef);
   
     if (docSnap.exists()) {
@@ -49,7 +49,7 @@ export async function getAllData(collectionName) {
 export async function deleteData(collectionName, docId) {
   const auth = getAuth();
   const userId = auth.currentUser.uid; 
-  await deleteDoc(doc(db, "users", userId, collectionName, docId));
+  await deleteDoc(doc(db,  `users/${userId}/${collectionName}/${docId}`));
 }
 
 async function commitDataEmpresa() {
@@ -67,7 +67,8 @@ async function commitDataFactura() {
     const facturas = await queryFactura();
     for (const factura of facturas) {
       try {
-        await addOrUpdateData("facturas",factura.factura_num+" , "+ factura.factura_date, factura);
+        const id = factura.factura_num + factura.factura_date.split('/')[2]
+        await addOrUpdateData("facturas",id, factura);
       } catch (e) {
         console.error("Error adding document: ", e);
       }
@@ -105,5 +106,9 @@ export async function uploadAllTable() {
   await commitDataArticulo();
 
   await commitDataCliente();
+}
+
+export async function uploadLocal(){
+  
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "VueFactura",
-  "version": "2.1.2",
+  "version": "2.1.12",
   "main": "dist-electron/main/index.js",
   "description": "Really simple Electron + Vue + Vite boilerplate.",
   "author": "xie",

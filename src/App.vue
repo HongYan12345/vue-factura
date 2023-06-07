@@ -1,6 +1,11 @@
 <template>
 <div v-if="!store.state.isLogin" class="main_login">
-   <PageLogin />
+  <div v-if="isLoading" class="loading">
+    <LoadingOutlined />
+  </div>
+  <div v-else>
+    <PageLogin />
+  </div>
 </div>
 <div v-else>
   <div class="menu-container">
@@ -38,6 +43,7 @@
         <a-menu @click="handleLogOut">
           <a-menu-item key="1">  {{ $t("logout") }} </a-menu-item>
           <a-menu-item key="2" v-if="store.state.isVisitor">  {{ $t("upload") }} </a-menu-item>
+          <a-menu-item key="3">  验证邮箱 </a-menu-item>
         </a-menu>
       </template>
       <a-button class="btn-main">
@@ -67,14 +73,14 @@
 import { reactive, toRefs, onMounted, onUpdated, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { DownOutlined ,CalculatorOutlined, LogoutOutlined} from "@ant-design/icons-vue";
+import { DownOutlined ,CalculatorOutlined, LogoutOutlined, LoadingOutlined} from "@ant-design/icons-vue";
 import type { MenuProps } from "ant-design-vue";
 import { useStore } from 'vuex'
 import './css/AppStyle.css';
 import Calculador from './components/Calculador.vue'
 import PageLogin from './components/PageLogin.vue'
 import { logOut} from './util/fireBase';
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, sendEmailVerification } from "firebase/auth";
 
 
 
@@ -83,6 +89,7 @@ export default {
     DownOutlined,
     CalculatorOutlined,
     LogoutOutlined,
+    LoadingOutlined,
     PageLogin,
     Calculador,
   },
@@ -91,6 +98,7 @@ export default {
       isCreate: false,
       selectedLanguage:'',
       visible: ref<boolean>(false),
+      isLoading: true,
     });
 
     //store
@@ -121,11 +129,11 @@ export default {
         // User is signed in, you can access user.uid here
         console.log("[PageApp] user:",user.uid);
         store.commit("logIn", user)
+        
       }
+      data.isLoading = false
     });
-    // const titleClick = (e: Event) => {
-    //   console.log('titleClick', e);
-    // };
+
 
     const handleMenuClick: MenuProps["onClick"] = (e) => {
       if (e.key == 1) {
@@ -148,6 +156,10 @@ export default {
       else if(e.key == 2){
         uploadFirebase()
       } 
+      else if(e.key == 3){
+        //verifyEmail()
+        //uploadLocal()
+      }
     };
 
     const handleMenu: MenuProps["onClick"] = (e) => {
@@ -160,6 +172,7 @@ export default {
       } else if (e.key == 2) {
         goClient();
       } else {
+        
       }
     };
 
@@ -173,6 +186,19 @@ export default {
         name: "client",
       });
     };
+
+    const verifyEmail = () => {
+      const user = getAuth().currentUser;
+      console.log("xxx");
+      if(user){
+        sendEmailVerification(user).then(function() {
+      console.log("Verification email sent.");
+    })
+    .catch((error) => {
+      console.error("Error sending verification email: ", error);
+    });
+      }
+    }
 
     onMounted(() => {
       console.log("onMounted");

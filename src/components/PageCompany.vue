@@ -267,15 +267,15 @@ export default {
       if(!store.state.isVisitor){
         getData("clientes", value).then((value:any) => {
           console.log("select dato client en firebase:",value)
-          if(value[0]){
-            data.client_name = value[0].name
-            data.client_direccion = value[0].direccion
-            data.client_telefono = value[0].telefono
-            data.client_cp = value[0].cp
-            data.client_poblation = value[0].poblation
-            data.client_nif = value[0].nif
-            data.client_forma = value[0].forma
-        }
+          
+          data.client_name = value.name
+          data.client_direccion = value.direccion
+          data.client_telefono = value.telefono
+          data.client_cp = value.cp
+          data.client_poblation = value.poblation
+          data.client_nif = value.nif
+          data.client_forma = value.forma
+        
         }).catch(error => {
           console.error("Error getting data: ", error);
         });

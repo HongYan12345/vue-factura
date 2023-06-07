@@ -30,7 +30,13 @@ export default defineComponent({
   },
   setup() {
     initAllTable()
-    uploadAllTable()
+
+    //store
+    const store = useStore()
+    if(!store.state.isVisitor){
+      uploadAllTable()
+    }
+    
     const data = reactive({
       error: false,
       isCreate: false,
@@ -62,8 +68,7 @@ export default defineComponent({
 
 //router
     const router = useRouter()
-//store
-    const store = useStore()
+
 
 
     const goCreate =() => {

@@ -1,10 +1,13 @@
 
 <template>
     <div v-if="!formState.loading_login">
+      
     <div class="img_login">
         <img class="logo" alt="Logo" src="../assets/factura.png" />
         <div>VueFactura</div>
     </div>
+    
+       
      <a-row> 
       <a-col :offset="3">
         <a-button v-if="formState.isRecupera" @click="volverLogin()">
@@ -17,6 +20,16 @@
      <a-alert
         message="Error"
         description="Email o Password no esta bien"
+        type="error"
+        show-icon
+        closable
+      />
+    </div>
+
+    <div v-if="errorEmail">
+     <a-alert
+        message="Error"
+        description="Email no verify"
         type="error"
         show-icon
         closable
@@ -39,7 +52,7 @@
           >
 
             <a-form-item label="Email" name="email">
-              <a-input v-model:value="formState.email" type="email" />
+              <a-input v-model:value="formState.email" spellcheck="false" type="email" />
             </a-form-item>
             <a-form-item v-if="!formState.isRecupera" label="Password" name="password">
               <a-input v-model:value="formState.password" type="password" @clickedEnter="sendForm()"/>
@@ -54,23 +67,60 @@
             </a-form-item>
     
             <a-form-item v-if="!formState.isRecupera" :wrapper-col="{ span: 25, offset: 0 }">
-              <a-button type="primary" html-type="submit" > Acceder</a-button>
+              <a-button type="primary" html-type="submit" :loading="loading" class="btn-normal"> Acceder</a-button>
             </a-form-item>
           </a-form>
-          <a-col :span="8">
-            <a v-if="!formState.isRecupera" @click="estaRecupera()">{{$t('registro')}}</a>
-          </a-col>
-          <a-col :span="8">
-            <a-button v-if="formState.isRecupera" :loading="formState.loading" @click="recuperar()">Recuperar</a-button>
-            <a-button v-if="!formState.isRecupera" :loading="formState.loading" @click="googleSignIn()"><template #icon><GoogleOutlined /></template>Google</a-button>
-            <a-button v-if="!formState.isRecupera" :loading="formState.loading" @click="loginVisitor()"><template #icon><GoogleOutlined /></template>{{$t('visitor')}}</a-button>
-
-          </a-col>
-          
-        </div>
-      </a-col>
+                  </div>
+               </a-col>
       
       </a-row>
+
+    
+  <a-row justify="space-between">
+    <a-col :span="8">
+            <a-button v-if="formState.isRecupera" :loading="formState.loading"  class="btn_normal" @click="recuperar()">Recuperar</a-button>
+            <a-button v-if="!formState.isRecupera" :loading="formState.loading" @click="googleSignIn()"><template #icon><GoogleOutlined /></template>Google</a-button>
+    </a-col>
+    <a-col :span="8">
+            <a-button v-if="!formState.isRecupera" :loading="formState.loading" @click="loginVisitor()"><template #icon><UserOutlined /></template>{{$t('visitor')}}</a-button>
+  </a-col>
+          
+  </a-row>
+      <br>
+  <a-row justify="space-between" >
+    <a-col :span="1"></a-col>
+     <a-col :span="8">
+            <a v-if="!formState.isRecupera" @click="estaRecupera()">{{$t('registro')}}</a>
+          </a-col>
+                <a-col :span="3"></a-col>
+      <a-col :span="8">
+       <a-dropdown :trigger="['click']">
+      <template #overlay>
+        <a-menu @click="handleMenuClick">
+          <a-menu-item key="1"> Español </a-menu-item>
+          <a-menu-item key="2"> English </a-menu-item>
+          <a-menu-item key="3"> 简体中文 </a-menu-item>
+        </a-menu>
+      </template>
+      <a>
+        {{ $t("lenguage") }}
+        <DownOutlined />
+      </a>
+    </a-dropdown>
+  </a-col>
+
+  </a-row>
+  <br>
+  <a-row justify="center">
+      <a>
+      {{ $t('repassword')}}
+      </a>
+  </a-row>
+
+          
+
+
+      
     </div>
   </div>
   <div v-else>
@@ -94,13 +144,14 @@
 <script lang="ts">
 
 import { reactive, ref ,toRefs, onMounted } from 'vue';
-import { loginUser, googleLogin, registraLogin} from '../util/fireBase';
+import { loginUser, googleLogin, registraLogin, logOut} from '../util/fireBase';
 import { RuleObject, ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-import { QuestionCircleOutlined ,LeftOutlined, FrownTwoTone, GoogleOutlined} from '@ant-design/icons-vue';
+import { QuestionCircleOutlined ,LeftOutlined, FrownTwoTone, GoogleOutlined, UserOutlined, DownOutlined} from '@ant-design/icons-vue';
 import { useStore } from 'vuex';
 import { message } from 'ant-design-vue';
 import '../css/LoginStyle.css';
 import { useI18n} from "vue-i18n"
+import type { MenuProps } from "ant-design-vue";
 
 export default {
   components: {
@@ -108,6 +159,8 @@ export default {
     LeftOutlined,
     FrownTwoTone,
     GoogleOutlined,
+    UserOutlined,
+    DownOutlined,
   },
  setup() {
 
@@ -125,6 +178,16 @@ export default {
     const {t, locale} = useI18n()
     const setLocale = (lang: string) => {
       locale.value = lang
+    };
+
+    const handleMenuClick: MenuProps["onClick"] = (e) => {
+      if (e.key == 1) {
+        setLocale("es");
+      } else if (e.key == 2) {
+        setLocale("en");
+      } else if (e.key == 3) {
+        setLocale("zh");
+      }
     };
 
     let validateEmail = async (rule: RuleObject, value: string) => {
@@ -173,7 +236,8 @@ export default {
       signUpActive: false,
       error: false,
       error_usuario : false,
-
+      errorEmail: false,
+      loading: false,
     });
     const refData = toRefs(data);
     
@@ -193,15 +257,24 @@ export default {
     // }
 
     const sendForm = () => {
+      data.loading = true
       loginUser(formState.email, formState.password)
       .then(
         result => {
           console.log('result login',result);
+          data.loading = false
           if(result != undefined){
-            formState.loading_login = true;
-            formState.email = ""
-            formState.password = ""
-            store.commit("logIn", result)
+            if(result.emailVerified){
+              formState.loading_login = true;
+              formState.email = ""
+              formState.password = ""
+              store.commit("logIn", result)
+            }
+            else{
+              data.errorEmail = true
+              logOut().then(() => {})
+            }
+            
           }
           else{
             data.error = true;
@@ -259,7 +332,7 @@ export default {
       recuperar,
       estaRecupera,
       volverLogin,
-
+      handleMenuClick,
     };
   },
 }
@@ -268,10 +341,6 @@ export default {
 <style scoped>
 
 
-.logo {
-  margin: 0 0 20px 0;
-  max-height: 100px;
-  max-width: min(300px, 100%);
-}
+
 
 </style>

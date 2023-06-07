@@ -98,7 +98,7 @@
               <th style="border-right: 0.3px solid #000; border-top: 0.3px solid #000; padding: 3px;font-size: 9px;">%DTO</th>
               <th style="border-right: 0.3px solid #000; border-top: 0.3px solid #000; padding: 3px;font-size: 9px;">BASE</th>
               <th style="border-right: 0.3px solid #000; border-top: 0.3px solid #000; padding: 3px;font-size: 9px;">21%IVA</th>
-              <th style="border-right: 0.3px solid #000; border-top: 0.3px solid #000; padding: 3px;font-size: 9px;">%R.E</th>
+              <th style="border-right: 0.3px solid #000; border-top: 0.3px solid #000; padding: 3px;font-size: 9px;">5.2%R.E</th>
               <th style=" solid #000; padding: 3px; border-top: 0.3px solid #000; font-size: 9px;">TOTAL EUROS</th>
             </tr>
           </thead>
@@ -284,7 +284,7 @@ export default {
         factura_date: data.date,
         factura_num: data.num,
         forma: data.forma,
-        id: data.num+" , "+data.date,
+        id: data.num+data.date.split('/')[2],
         item_list: dataItemJson,
         user: dataClienteJson
       }
