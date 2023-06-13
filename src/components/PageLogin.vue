@@ -112,7 +112,7 @@
   </a-row>
   <br>
   <a-row justify="center">
-      <a>
+      <a v-if="!formState.isRecupera" @click="olvidaContrasenia()">
       {{ $t('repassword')}}
       </a>
   </a-row>
@@ -138,15 +138,27 @@
     <a-spin />
     </div>
   </div>
+
+  <a-modal
+    v-model:visible="isOlvida"
+    title="Email:"
+    @ok="handleOkEmail"
+  >
+    <a-input v-model:value="formState.email" spellcheck="false">{{ $t("email") }}:</a-input>
+  </a-modal>
   
 </template>
 
 <script lang="ts">
 
 import { reactive, ref ,toRefs, onMounted } from 'vue';
-import { loginUser, googleLogin, registraLogin, logOut} from '../util/fireBase';
+import { loginUser, googleLogin, 
+          registraLogin, logOut,
+          olvidaPass} from '../util/fireBase';
 import { RuleObject, ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-import { QuestionCircleOutlined ,LeftOutlined, FrownTwoTone, GoogleOutlined, UserOutlined, DownOutlined} from '@ant-design/icons-vue';
+import { QuestionCircleOutlined, LeftOutlined, 
+          FrownTwoTone, GoogleOutlined, 
+          UserOutlined, DownOutlined} from '@ant-design/icons-vue';
 import { useStore } from 'vuex';
 import { message } from 'ant-design-vue';
 import '../css/LoginStyle.css';
@@ -174,7 +186,7 @@ export default {
       re_password: '',
     });
 
-    //i18n
+//i18n
     const {t, locale} = useI18n()
     const setLocale = (lang: string) => {
       locale.value = lang
@@ -238,23 +250,13 @@ export default {
       error_usuario : false,
       errorEmail: false,
       loading: false,
+      isOlvida: false,
     });
     const refData = toRefs(data);
     
     onMounted(() => {
       
     });
-
-    // const formUrl = () =>{
-    //   if( data.forgotPassActive ){
-    //     return data.recoverUrl;
-    //   }
-
-    //   if( data.signUpActive ){
-    //     return data.registerUrl;
-    //   }
-    //   return data.loginUrl;
-    // }
 
     const sendForm = () => {
       data.loading = true
@@ -290,14 +292,17 @@ export default {
       formState.loading_login = false;
     }
 
+// login visitor
     const loginVisitor = () => {
       store.commit("loginVisitor")
     }
 
+//login google
     const googleSignIn = async () => {
       googleLogin()
     }
 
+//recuperar cuenta
     const estaRecupera = () => {
       formState.isRecupera = true;
       data.error = false;
@@ -316,6 +321,18 @@ export default {
         });
     }
 
+// olvidar contraseña
+    const olvidaContrasenia = () =>{
+      data.isOlvida = true
+    }
+
+    const handleOkEmail = () =>{
+      olvidaPass(formState.email).then(value => {
+          data.isOlvida = false
+        }).catch(error => {
+          console.error(error);
+        });
+    }
 
     return {
       ...refData,
@@ -333,6 +350,8 @@ export default {
       estaRecupera,
       volverLogin,
       handleMenuClick,
+      olvidaContrasenia,
+      handleOkEmail,
     };
   },
 }

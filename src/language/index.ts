@@ -40,6 +40,7 @@ const messages={
     visitor:"Visitor",
     upload:"Subir dato",
     repassword:"olvida la contraseña",
+    uplocal:"Subir datos a local",
   },
   en: {
     lenguage: "Lenguage",
@@ -80,7 +81,7 @@ const messages={
     visitor:"Visitor",
     upload:"Upload dato",
     repassword:"forget the password",
-    
+    uplocal:"Upload data to local",
   },
   zh: {
     lenguage: "语言",
@@ -120,7 +121,8 @@ const messages={
     logout:"退出",
     visitor:"游客登录",
     upload:"上传数据",
-    repassword:"忘记密码"
+    repassword:"忘记密码",
+    uplocal:"上传数据到本地",
   },
 };
 

@@ -22,7 +22,7 @@
     "dev": "vite",
     "increase-version": "node increase-version.js",
     "build": "npm run increase-version && vue-tsc --noEmit && vite build && electron-builder",
-    "build:mobile": "vite build --config vite.config.mobile.ts",
+    "build:mobile": "vue-tsc --noEmit && vite build --config vite.config.mobile.ts",
     "preview": "vite preview"
   },
   "devDependencies": {

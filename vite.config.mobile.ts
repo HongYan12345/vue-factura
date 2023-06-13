@@ -4,6 +4,7 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [vue()],
+  base: './',
   server: {
     proxy: {
       '/identitytoolkit': 'https://www.googleapis.com',
@@ -42,6 +43,11 @@ export default defineConfig({
         },
       },
     },
+    cssCodeSplit: false,
+    sourcemap: false,
+    
+    manifest: false,
+    lib: false,
   },
   resolve: {
     alias: {

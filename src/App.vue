@@ -43,7 +43,8 @@
         <a-menu @click="handleLogOut">
           <a-menu-item key="1">  {{ $t("logout") }} </a-menu-item>
           <a-menu-item key="2" v-if="store.state.isVisitor">  {{ $t("upload") }} </a-menu-item>
-          <a-menu-item key="3">  验证邮箱 </a-menu-item>
+          <!-- <a-menu-item key="3">  验证邮箱 </a-menu-item> -->
+          <a-menu-item key="3" v-if="!store.state.isVisitor">  {{ $t("uplocal") }} </a-menu-item>
         </a-menu>
       </template>
       <a-button class="btn-main">
@@ -70,18 +71,19 @@
   
 </template>
 <script lang="ts">
-import { reactive, toRefs, onMounted, onUpdated, ref } from "vue";
-import { useRouter } from "vue-router";
-import { useI18n } from "vue-i18n";
-import { DownOutlined ,CalculatorOutlined, LogoutOutlined, LoadingOutlined} from "@ant-design/icons-vue";
-import type { MenuProps } from "ant-design-vue";
+import { reactive, toRefs, onMounted, ref } from "vue"
+import { useRouter } from "vue-router"
+import { useI18n } from "vue-i18n"
+import { DownOutlined ,CalculatorOutlined, 
+          LogoutOutlined, LoadingOutlined} from "@ant-design/icons-vue"
+import type { MenuProps } from "ant-design-vue"
 import { useStore } from 'vuex'
-import './css/AppStyle.css';
+import './css/AppStyle.css'
 import Calculador from './components/Calculador.vue'
 import PageLogin from './components/PageLogin.vue'
-import { logOut} from './util/fireBase';
-import { getAuth, onAuthStateChanged, sendEmailVerification } from "firebase/auth";
-
+import { logOut} from './util/fireBase'
+import { getAuth, onAuthStateChanged, sendEmailVerification } from "firebase/auth"
+import { uploadLocal} from './util/dbFirebase'
 
 
 export default {
@@ -158,7 +160,7 @@ export default {
       } 
       else if(e.key == 3){
         //verifyEmail()
-        //uploadLocal()
+        uploadLocal()
       }
     };
 

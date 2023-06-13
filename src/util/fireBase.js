@@ -69,3 +69,18 @@ export async function logOut(){
     console.error('Error signing out: ', error);
   }
 }
+
+export async function olvidaPass(emailAddress){
+  const auth = getAuth();
+  message.loading("wait")
+  sendPasswordResetEmail(auth, emailAddress)
+  .then(() => {
+    // Password reset email sent!
+    message.success("password reset email sent")
+  })
+  .catch((error) => {
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    message.error("error")
+  });
+}
