@@ -121,6 +121,7 @@
         ></a-input>
       </a-col>
     </a-row>
+    <br>
     <a-row>
       <a-col :span="5">{{$t('precio')}}:</a-col>
       <a-col :span="17">
@@ -133,6 +134,7 @@
         ></a-input>
       </a-col>
     </a-row>
+    <br>
     <a-row>
       <a-col :span="5">{{$t('codigo')}}:</a-col>
       <a-col :span="17">
@@ -143,6 +145,7 @@
         ></a-input>
       </a-col>
     </a-row>
+    <br>
     <a-select
       v-model:value="articulo"
       show-search
@@ -168,7 +171,7 @@
           >{{$t('delect')}}</a-button>
         </a-popconfirm>
         
-        <a-button :class="{ 'center-button': !(isEdit!='') }" key="submit" type="primary" size="large"  @click="saveProducto">{{$t('save')}}</a-button>
+        <a-button :class="{ 'center-button': !(isEdit!='') }" class="btn-normal" key="submit" type="primary" size="large"  @click="saveProducto">{{$t('save')}}</a-button>
        </div>
         
       </template>

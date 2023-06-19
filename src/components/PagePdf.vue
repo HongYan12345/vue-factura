@@ -129,12 +129,12 @@
     </tr>
   </tbody>
 </table>
-    </div>
-    <div v-if="isHistory != 1">
+    </div >
+    <!-- <div v-if="isHistory != 1">
       <a-button @click="savePdf">{{$t('save')}}</a-button>
-    </div>
+    </div> -->
     <div>
-      <a-button @click="exportPdf">{{$t('export')}}</a-button>
+      <a-button class="btn-export" @click="exportPdf">{{$t('export')}}</a-button>
     </div>
   </div>
 </template>
